@@ -1,66 +1,87 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-```
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<meta name="description"
-      content="Weather Summary provides current weather, hourly forecasts, 7-day forecasts, weather alerts, humidity, wind speed, pressure, sunrise and sunset information.">
+    <meta name="description"
+          content="Weather Summary provides current weather, hourly forecasts, 7-day forecasts, humidity, wind speed, atmospheric pressure, sunrise, sunset and severe weather information.">
 
-<meta name="robots" content="index, follow">
+    <meta name="keywords"
+          content="weather forecast, weather summary, hourly weather, 7 day weather, live weather, weather alerts">
 
-<title>Weather Summary - Live Weather & Forecasts</title>
+    <meta name="author"
+          content="Weather Summary">
 
-<link rel="stylesheet" href="style.css">
+    <meta name="robots"
+          content="index, follow">
 
-<!-- Google AdSense code will be placed here after Google gives you your code -->
-```
+    <meta name="theme-color"
+          content="#2563eb">
+
+    <title>Weather Summary - Live Weather & 7-Day Forecast</title>
+
+    <link rel="canonical"
+          href="https://atdsdeveloper.github.io/wheathersummary/">
+
+    <link rel="stylesheet"
+          href="style.css">
 
 </head>
 
+
 <body>
 
-```
+<header class="site-header">
+
+    <div class="nav-container">
+
+        <a href="index.html"
+           class="logo">
+            🌤️ Weather Summary
+        </a>
+
+        <nav>
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+            <a href="contact.html">
+                Contact
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
 <main class="app">
 
-    <!-- NAVIGATION -->
+    <section class="hero">
 
-    <nav class="navigation" aria-label="Main navigation">
-
-        <a href="index.html">Home</a>
-
-        <a href="about.html">About</a>
-
-        <a href="contact.html">Contact</a>
-
-        <a href="privacy.html">Privacy Policy</a>
-
-        <a href="terms.html">Terms of Use</a>
-
-    </nav>
-
-
-    <!-- HEADER -->
-
-    <header class="header">
-
-        <h1>🌤️ Weather Summary</h1>
+        <h1>
+            Live Weather Forecast
+        </h1>
 
         <p>
-            Live weather, hourly forecasts,
-            7-day forecasts and official weather alerts.
+            Get current weather, hourly forecasts,
+            7-day forecasts and severe weather information
+            for locations around the world.
         </p>
 
-    </header>
+    </section>
 
-
-    <!-- SEARCH -->
 
     <section class="search-section">
 
@@ -82,24 +103,14 @@
     </section>
 
 
-    <!-- LOADING -->
-
-    <div
-        id="loading"
-        class="loading hidden"
-        aria-live="polite"
-    >
+    <div id="loading"
+         class="loading hidden">
         Loading weather...
     </div>
 
 
-    <!-- ERROR -->
-
-    <div
-        id="error"
-        class="error hidden"
-        role="alert"
-    >
+    <div id="error"
+         class="error hidden">
     </div>
 
 
@@ -115,16 +126,12 @@
             --
         </p>
 
-
         <div class="main-weather">
 
-            <div
-                id="weatherIcon"
-                class="weather-icon"
-            >
+            <div id="weatherIcon"
+                 class="weather-icon">
                 🌤️
             </div>
-
 
             <div class="temperature-area">
 
@@ -147,8 +154,6 @@
 
         </div>
 
-
-        <!-- WEATHER DETAILS -->
 
         <div class="details">
 
@@ -176,7 +181,7 @@
                 </strong>
 
                 <small>
-                    Wind
+                    Wind Speed
                 </small>
 
             </div>
@@ -216,32 +221,34 @@
     </section>
 
 
-    <!-- WEATHER SUMMARY -->
+    <!-- ORIGINAL CONTENT -->
 
-    <section class="card summary-card">
+    <section class="card information-card">
 
-        <h2>📝 Today's Summary</h2>
+        <h2>
+            Weather Summary
+        </h2>
 
         <p id="summary">
-            Search for a city to see today's weather summary.
+            Search for a location to receive a
+            weather summary.
         </p>
 
     </section>
 
 
-    <!-- WEATHER ALERTS -->
+    <!-- ALERTS -->
 
-    <section class="card alerts-section">
+    <section class="card">
 
         <h2>
-            ⚠️ Weather Alerts
+            ⚠️ Severe Weather Alerts
         </h2>
 
-        <p class="alert-intro">
+        <p class="section-description">
 
-            Official weather warnings are shown when
-            authoritative alert information is available
-            for the selected location.
+            Official severe-weather warnings are displayed
+            when reliable warning data is available.
 
         </p>
 
@@ -249,39 +256,35 @@
 
             <div class="no-alert">
 
-                🔵 No alert information has been loaded yet.
+                🔵 No alert information has been loaded.
+
+                <br><br>
+
+                Always follow instructions from your
+                local meteorological or emergency authority
+                during severe weather.
 
             </div>
 
         </div>
 
-        <p class="alert-disclaimer">
-
-            Weather alerts are provided for informational
-            purposes. Always follow instructions from your
-            local meteorological service and emergency
-            authorities during dangerous weather.
-
-        </p>
-
     </section>
 
 
-    <!-- HOURLY FORECAST -->
+    <!-- HOURLY -->
 
-    <section class="card forecast-section">
+    <section class="card">
 
         <h2>
             🕐 24-Hour Forecast
         </h2>
 
-        <div
-            id="hourlyForecast"
-            class="hourly-container"
-        >
+        <div id="hourlyForecast"
+             class="hourly-container">
 
             <p>
-                Search for a city to see the hourly forecast.
+                Search for a location to view
+                the hourly forecast.
             </p>
 
         </div>
@@ -289,21 +292,20 @@
     </section>
 
 
-    <!-- 7 DAY FORECAST -->
+    <!-- DAILY -->
 
-    <section class="card forecast-section">
+    <section class="card">
 
         <h2>
             📅 7-Day Forecast
         </h2>
 
-        <div
-            id="dailyForecast"
-            class="daily-container"
-        >
+        <div id="dailyForecast"
+             class="daily-container">
 
             <p>
-                Search for a city to see the 7-day forecast.
+                Search for a location to view
+                the 7-day forecast.
             </p>
 
         </div>
@@ -311,7 +313,7 @@
     </section>
 
 
-    <!-- SUNRISE / SUNSET -->
+    <!-- SUN -->
 
     <section class="card sun-section">
 
@@ -347,61 +349,72 @@
     </section>
 
 
-    <!-- WEATHER DATA SOURCE -->
+    <!-- DATA SOURCE -->
 
     <section class="card information-card">
 
-        <h2>Weather Data Sources</h2>
+        <h2>
+            Weather Data Sources
+        </h2>
 
         <p>
-            Weather forecast data is provided by Open-Meteo.
-            Weather warning information, where available,
-            is based on authoritative warnings aggregated
-            through the World Meteorological Organization
-            Severe Weather Information Centre.
+
+            Weather forecasts are provided using
+            Open-Meteo weather services.
+
+            Severe weather information, when available,
+            is based on official warning information
+            issued by relevant meteorological authorities.
+
         </p>
 
         <p>
-            Warnings are issued by the relevant national
-            meteorological and hydrological services.
-            Weather Summary does not issue official warnings.
+
+            Weather Summary is an information service
+            and should not replace official emergency
+            instructions.
+
         </p>
 
     </section>
 
-
-    <!-- FOOTER -->
-
-    <footer>
-
-        <p>
-            Weather forecast data provided by Open-Meteo.
-        </p>
-
-        <p>
-            Weather warnings are attributed to their
-            respective issuing authorities.
-        </p>
-
-        <div class="footer-links">
-
-            <a href="about.html">About</a>
-
-            <a href="contact.html">Contact</a>
-
-            <a href="privacy.html">Privacy Policy</a>
-
-            <a href="terms.html">Terms of Use</a>
-
-        </div>
-
-    </footer>
-
 </main>
 
 
+<footer>
+
+    <p>
+        Weather Summary © 2026
+    </p>
+
+    <p>
+        Weather forecast data provided by Open-Meteo.
+    </p>
+
+    <div class="footer-links">
+
+        <a href="about.html">
+            About
+        </a>
+
+        <a href="privacy.html">
+            Privacy Policy
+        </a>
+
+        <a href="terms.html">
+            Terms of Use
+        </a>
+
+        <a href="contact.html">
+            Contact
+        </a>
+
+    </div>
+
+</footer>
+
+
 <script src="script.js"></script>
-```
 
 </body>
 
