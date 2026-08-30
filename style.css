@@ -1,3 +1,7 @@
+/* =========================================
+   RESET
+========================================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -5,8 +9,11 @@
 }
 
 
-body {
+/* =========================================
+   BODY
+========================================= */
 
+body {
     min-height: 100vh;
 
     font-family:
@@ -22,119 +29,112 @@ body {
             #1e1b4b
         );
 
-    color: white;
+    color: #ffffff;
 
     padding: 30px;
+
+    line-height: 1.5;
 }
 
+
+/* =========================================
+   APP
+========================================= */
 
 .app {
-
     width: 100%;
-
-    max-width: 1000px;
-
-    margin: auto;
-
+    max-width: 1050px;
+    margin: 0 auto;
 }
 
 
-/* HEADER */
+/* =========================================
+   HEADER
+========================================= */
 
 .header {
-
     text-align: center;
-
     margin-bottom: 20px;
-
 }
-
 
 .header h1 {
-
     font-size: 40px;
-
-    margin-bottom: 10px;
-
+    margin-bottom: 8px;
 }
-
 
 .header p {
-
-    opacity: 0.85;
-
     font-size: 16px;
-
+    opacity: 0.88;
 }
 
 
-/* NAVIGATION */
+/* =========================================
+   NAVIGATION
+========================================= */
 
 .site-nav {
-
     display: flex;
-
     flex-wrap: wrap;
-
     justify-content: center;
-
     gap: 8px;
-
-    margin-bottom: 25px;
 
     padding: 12px;
 
+    margin-bottom: 25px;
+
     background:
-        rgba(255,255,255,0.10);
+        rgba(255, 255, 255, 0.10);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.12);
 
     border-radius: 14px;
-
 }
 
-
 .site-nav a {
-
-    color: white;
+    color: #ffffff;
 
     text-decoration: none;
 
     padding: 9px 13px;
 
-    border-radius: 8px;
+    border-radius: 9px;
 
     font-size: 14px;
 
-    transition: 0.2s;
-
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
-
-.site-nav a:hover {
-
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
     background:
-        rgba(255,255,255,0.18);
+        rgba(255, 255, 255, 0.20);
 
+    transform:
+        translateY(-1px);
 }
 
 
-/* SEARCH */
+/* =========================================
+   SEARCH
+========================================= */
 
 .search-section {
-
     display: flex;
-
     gap: 10px;
 
     margin-bottom: 25px;
-
 }
 
-
 .search-section input {
-
     flex: 1;
 
-    padding: 16px;
+    min-width: 0;
+
+    padding: 15px 16px;
 
     border: none;
 
@@ -144,20 +144,32 @@ body {
 
     font-size: 16px;
 
+    color: #172033;
+
+    background: #ffffff;
+}
+
+.search-section input:focus {
+    box-shadow:
+        0 0 0 3px
+        rgba(255, 255, 255, 0.35);
 }
 
 
-button {
+/* =========================================
+   BUTTONS
+========================================= */
 
+button {
     border: none;
 
     border-radius: 12px;
 
-    padding: 15px 20px;
+    padding: 14px 18px;
 
     background: #0ea5e9;
 
-    color: white;
+    color: #ffffff;
 
     font-size: 15px;
 
@@ -165,33 +177,50 @@ button {
 
     cursor: pointer;
 
-    transition: 0.2s;
-
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease;
 }
-
 
 button:hover {
-
     background: #0284c7;
 
-    transform: translateY(-1px);
+    transform:
+        translateY(-1px);
+}
 
+button:active {
+    transform:
+        translateY(0);
+}
+
+button:disabled {
+    opacity: 0.55;
+
+    cursor: not-allowed;
+
+    transform: none;
 }
 
 
-/* CARDS */
+/* =========================================
+   CARDS
+========================================= */
 
 .card {
-
     background:
-        rgba(255,255,255,0.13);
+        rgba(255, 255, 255, 0.13);
 
     backdrop-filter:
         blur(15px);
 
+    -webkit-backdrop-filter:
+        blur(15px);
+
     border:
         1px solid
-        rgba(255,255,255,0.1);
+        rgba(255, 255, 255, 0.12);
 
     border-radius: 20px;
 
@@ -201,40 +230,33 @@ button:hover {
 
     box-shadow:
         0 10px 30px
-        rgba(0,0,0,0.15);
-
+        rgba(0, 0, 0, 0.15);
 }
 
 
-/* CURRENT WEATHER */
+/* =========================================
+   CURRENT WEATHER
+========================================= */
 
 .current-weather {
-
     text-align: center;
-
 }
-
 
 #city {
-
     font-size: 32px;
-
     margin-bottom: 5px;
-
 }
-
 
 #date {
-
-    opacity: 0.7;
-
+    opacity: 0.75;
 }
 
 
-/* MAIN WEATHER */
+/* =========================================
+   MAIN WEATHER
+========================================= */
 
 .main-weather {
-
     display: flex;
 
     justify-content: center;
@@ -244,211 +266,124 @@ button:hover {
     gap: 30px;
 
     margin: 25px 0;
-
 }
-
 
 .weather-icon {
-
     font-size: 90px;
 
+    line-height: 1;
 }
 
-
 #temperature {
-
     font-size: 70px;
 
     font-weight: bold;
 
+    line-height: 1;
 }
-
 
 #condition {
-
     font-size: 21px;
 
-    margin: 5px 0 10px;
-
+    margin:
+        10px 0;
 }
-
 
 .temperature-area p {
-
     opacity: 0.8;
-
 }
 
 
-/* WEATHER DETAILS */
+/* =========================================
+   DETAILS
+========================================= */
 
 .details {
-
     display: grid;
 
     grid-template-columns:
         repeat(4, 1fr);
 
     gap: 15px;
-
 }
 
-
 .detail {
-
     padding: 18px;
 
     border-radius: 15px;
 
     background:
-        rgba(255,255,255,0.1);
+        rgba(255, 255, 255, 0.10);
 
+    min-width: 0;
 }
 
-
 .detail span {
-
     display: block;
 
     font-size: 27px;
 
     margin-bottom: 8px;
-
 }
 
-
 .detail strong {
-
     display: block;
 
     font-size: 18px;
 
+    word-break: break-word;
 }
 
-
 .detail small {
-
     display: block;
 
     margin-top: 5px;
 
     opacity: 0.7;
-
 }
 
 
-/* SUMMARY */
+/* =========================================
+   HEADINGS
+========================================= */
 
 .summary-card h2,
 .alerts-section h2,
 .forecast-section h2 {
-
     margin-bottom: 15px;
-
 }
-
 
 .summary-card p {
-
-    line-height: 1.7;
-
+    line-height: 1.75;
     font-size: 17px;
-
 }
 
 
-/* ALERTS */
+/* =========================================
+   ALERTS
+========================================= */
 
 .no-alert {
-
     background:
-        rgba(59,130,246,0.2);
+        rgba(59, 130, 246, 0.20);
 
     border-left:
-        5px solid #3b82f6;
+        5px solid
+        #60a5fa;
 
     padding: 18px;
 
     border-radius: 10px;
 
     line-height: 1.6;
-
 }
 
 
-.alert {
-
-    padding: 18px;
-
-    border-radius: 12px;
-
-    margin-bottom: 12px;
-
-}
-
-
-.alert h3 {
-
-    margin-bottom: 8px;
-
-}
-
-
-.alert p {
-
-    line-height: 1.5;
-
-}
-
-
-.alert-extreme {
-
-    background:
-        rgba(127,29,29,0.85);
-
-    border-left:
-        6px solid #ef4444;
-
-}
-
-
-.alert-severe {
-
-    background:
-        rgba(154,52,18,0.85);
-
-    border-left:
-        6px solid #f97316;
-
-}
-
-
-.alert-moderate {
-
-    background:
-        rgba(161,98,7,0.85);
-
-    border-left:
-        6px solid #facc15;
-
-}
-
-
-.alert-minor {
-
-    background:
-        rgba(30,64,175,0.85);
-
-    border-left:
-        6px solid #60a5fa;
-
-}
-
-
-/* HOURLY */
+/* =========================================
+   HOURLY FORECAST
+========================================= */
 
 .hourly-container {
-
     display: flex;
 
     gap: 12px;
@@ -457,95 +392,79 @@ button:hover {
 
     padding-bottom: 10px;
 
+    scrollbar-width: thin;
 }
 
-
 .hour {
-
-    min-width: 120px;
+    min-width: 125px;
 
     padding: 15px;
 
     text-align: center;
 
     background:
-        rgba(255,255,255,0.1);
+        rgba(255, 255, 255, 0.10);
 
     border-radius: 15px;
 
     flex-shrink: 0;
-
 }
-
 
 .hour strong {
-
     font-size: 14px;
-
 }
-
 
 .hour .icon {
-
     font-size: 32px;
 
-    margin: 10px 0;
-
+    margin:
+        10px 0;
 }
 
-
 .hour .temp {
-
     font-size: 20px;
 
     font-weight: bold;
-
 }
 
-
 .hour .condition {
-
     font-size: 13px;
 
     margin-top: 5px;
 
+    min-height: 38px;
 }
 
-
 .hour .rain {
-
     font-size: 13px;
 
     margin-top: 8px;
 
-    opacity: 0.8;
-
+    opacity: 0.85;
 }
 
 
-/* DAILY */
+/* =========================================
+   DAILY FORECAST
+========================================= */
 
 .daily-container {
-
     display: flex;
 
     flex-direction: column;
 
     gap: 10px;
-
 }
 
-
 .day {
-
     display: grid;
 
     grid-template-columns:
-        90px
+        110px
         60px
         1fr
-        120px
-        100px;
+        130px
+        140px;
 
     align-items: center;
 
@@ -554,115 +473,104 @@ button:hover {
     padding: 15px;
 
     background:
-        rgba(255,255,255,0.1);
+        rgba(255, 255, 255, 0.10);
 
     border-radius: 12px;
-
 }
 
+.day-name {
+    font-weight: bold;
+}
 
 .day .icon {
-
     font-size: 32px;
-
 }
 
+.day-condition {
+    font-size: 14px;
+}
 
 .day .temps {
-
     font-weight: bold;
 
+    white-space: nowrap;
 }
-
 
 .day .rain {
+    font-size: 13px;
 
-    font-size: 14px;
+    opacity: 0.85;
 
-    opacity: 0.8;
-
+    line-height: 1.6;
 }
 
 
-/* SUN */
+/* =========================================
+   SUNRISE / SUNSET
+========================================= */
 
 .sun-section {
-
     display: flex;
 
     justify-content: space-around;
 
     text-align: center;
 
+    gap: 30px;
 }
 
-
 .sun-item {
-
     display: flex;
 
     flex-direction: column;
 
     gap: 7px;
 
+    min-width: 130px;
 }
-
 
 .sun-item span {
-
     font-size: 35px;
-
 }
-
 
 .sun-item strong {
-
     font-size: 20px;
-
 }
-
 
 .sun-item small {
-
     opacity: 0.7;
-
 }
 
 
-/* LOADING */
+/* =========================================
+   LOADING
+========================================= */
 
 .loading {
-
     text-align: center;
 
     padding: 15px;
 
     background:
-        rgba(255,255,255,0.1);
+        rgba(255, 255, 255, 0.10);
 
     border-radius: 10px;
 
     margin-bottom: 20px;
-
 }
 
 
-.hidden {
-
-    display: none;
-
-}
-
-
-/* ERROR */
+/* =========================================
+   ERROR
+========================================= */
 
 .error {
-
     background:
-        rgba(239,68,68,0.3);
+        rgba(239, 68, 68, 0.30);
 
     border-left:
-        5px solid #ef4444;
+        5px solid
+        #ef4444;
 
     padding: 15px;
 
@@ -670,42 +578,48 @@ button:hover {
 
     border-radius: 10px;
 
+    line-height: 1.5;
 }
 
 
-/* FOOTER */
+/* =========================================
+   HIDDEN
+========================================= */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
 
 footer {
-
     text-align: center;
 
-    opacity: 0.8;
+    opacity: 0.82;
 
     padding: 25px 10px;
 
     font-size: 13px;
-
 }
 
+footer p {
+    margin-bottom: 8px;
+}
 
 footer a {
-
-    color: white;
+    color: #ffffff;
 
     text-decoration: none;
-
 }
-
 
 footer a:hover {
-
     text-decoration: underline;
-
 }
 
-
 .footer-links {
-
     display: flex;
 
     justify-content: center;
@@ -714,106 +628,160 @@ footer a:hover {
 
     gap: 15px;
 
-    margin-top: 12px;
+    margin:
+        15px 0;
+}
+
+.copyright {
+    opacity: 0.65;
+}
+
+
+/* =========================================
+   RESPONSIVE TABLETS
+========================================= */
+
+@media (max-width: 850px) {
+
+    .day {
+        grid-template-columns:
+            90px
+            55px
+            1fr
+            110px;
+    }
+
+    .day .rain {
+        display: none;
+    }
 
 }
 
 
-/* MOBILE */
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 700px) {
 
     body {
-
         padding: 15px;
-
     }
-
 
     .header h1 {
-
         font-size: 29px;
-
     }
 
+    .header p {
+        font-size: 14px;
+    }
 
     .site-nav {
-
         flex-direction: column;
 
         align-items: stretch;
 
         text-align: center;
-
     }
 
+    .site-nav a {
+        width: 100%;
+    }
 
     .search-section {
-
         flex-direction: column;
-
     }
 
+    .search-section input,
+    .search-section button {
+        width: 100%;
+    }
+
+    .card {
+        padding: 20px;
+    }
 
     .main-weather {
-
         flex-direction: column;
 
-        gap: 10px;
-
+        gap: 15px;
     }
-
 
     .weather-icon {
-
         font-size: 70px;
-
     }
-
 
     #temperature {
-
         font-size: 55px;
-
     }
-
 
     .details {
-
         grid-template-columns:
             repeat(2, 1fr);
-
     }
 
-
     .day {
-
         grid-template-columns:
-            60px
+            70px
             45px
             1fr;
 
+        gap: 10px;
     }
-
 
     .day .temps {
-
         text-align: right;
-
     }
-
 
     .day .rain {
-
         display: none;
-
     }
 
-
     .sun-section {
+        justify-content: center;
+    }
 
-        gap: 30px;
+}
 
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 420px) {
+
+    .card {
+        padding: 16px;
+    }
+
+    #city {
+        font-size: 25px;
+    }
+
+    #temperature {
+        font-size: 48px;
+    }
+
+    .details {
+        gap: 8px;
+    }
+
+    .detail {
+        padding: 12px;
+    }
+
+    .detail span {
+        font-size: 23px;
+    }
+
+    .detail strong {
+        font-size: 15px;
+    }
+
+    .footer-links {
+        flex-direction: column;
+
+        gap: 8px;
     }
 
 }
