@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
 
@@ -8,10 +7,16 @@
           content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-          content="Weather Summary provides current weather, hourly forecasts, 7-day forecasts, weather alerts, humidity, wind speed, pressure and location-based weather information.">
+          content="Weather Summary provides current weather, hourly forecasts and 7-day forecasts with temperature, humidity, wind, precipitation probability, pressure and sunrise and sunset information.">
 
     <meta name="robots"
           content="index, follow">
+
+    <meta name="theme-color"
+          content="#2563eb">
+
+    <link rel="canonical"
+          href="https://atdsdeveloper.github.io/wheathersummary/">
 
     <title>Weather Summary - Live Weather & Forecast</title>
 
@@ -22,8 +27,6 @@
 <body>
 
 <main class="app">
-
-    <!-- HEADER -->
 
     <header class="header">
 
@@ -36,20 +39,23 @@
     </header>
 
 
-    <!-- NAVIGATION -->
-
     <nav class="site-nav"
          aria-label="Main navigation">
 
-        <a href="index.html">Home</a>
+        <a href="index.html"
+           aria-current="page">
+            Home
+        </a>
 
-        <a href="about.html">About</a>
+        <a href="about.html">
+            About
+        </a>
 
-        <a href="weather-sources.html">
+        <a href="sources.html">
             Weather Sources
         </a>
 
-        <a href="privacy-policy.html">
+        <a href="privacy.html">
             Privacy Policy
         </a>
 
@@ -64,46 +70,46 @@
     </nav>
 
 
-    <!-- SEARCH -->
-
-    <section class="search-section">
+    <section class="search-section"
+             aria-label="Weather search">
 
         <input
             type="text"
             id="cityInput"
             placeholder="Enter city name..."
-            aria-label="City name"
+            aria-label="Enter city name"
+            autocomplete="off"
         >
 
-        <button id="searchButton">
+        <button
+            id="searchButton"
+            type="button">
             🔍 Search
         </button>
 
-        <button id="locationButton">
+        <button
+            id="locationButton"
+            type="button">
             📍 My Location
         </button>
 
     </section>
 
 
-    <!-- LOADING -->
-
     <div id="loading"
-         class="loading hidden">
-
+         class="loading hidden"
+         role="status"
+         aria-live="polite">
         Loading weather...
-
     </div>
 
-
-    <!-- ERROR -->
 
     <div id="error"
-         class="error hidden">
+         class="error hidden"
+         role="alert"
+         aria-live="assertive">
     </div>
 
-
-    <!-- CURRENT WEATHER -->
 
     <section class="card current-weather">
 
@@ -119,10 +125,9 @@
         <div class="main-weather">
 
             <div id="weatherIcon"
-                 class="weather-icon">
-
+                 class="weather-icon"
+                 aria-hidden="true">
                 🌤️
-
             </div>
 
 
@@ -148,13 +153,10 @@
         </div>
 
 
-        <!-- WEATHER DETAILS -->
-
         <div class="details">
 
             <div class="detail">
-
-                <span>💧</span>
+                <span aria-hidden="true">💧</span>
 
                 <strong id="humidity">
                     --%
@@ -163,13 +165,11 @@
                 <small>
                     Humidity
                 </small>
-
             </div>
 
 
             <div class="detail">
-
-                <span>💨</span>
+                <span aria-hidden="true">💨</span>
 
                 <strong id="wind">
                     -- km/h
@@ -178,13 +178,11 @@
                 <small>
                     Wind
                 </small>
-
             </div>
 
 
             <div class="detail">
-
-                <span>🌧️</span>
+                <span aria-hidden="true">🌧️</span>
 
                 <strong id="rainChance">
                     --%
@@ -193,13 +191,11 @@
                 <small>
                     Rain Chance
                 </small>
-
             </div>
 
 
             <div class="detail">
-
-                <span>🌡️</span>
+                <span aria-hidden="true">🌡️</span>
 
                 <strong id="pressure">
                     -- hPa
@@ -208,15 +204,12 @@
                 <small>
                     Pressure
                 </small>
-
             </div>
 
         </div>
 
     </section>
 
-
-    <!-- SUMMARY -->
 
     <section class="card summary-card">
 
@@ -225,34 +218,30 @@
         </h2>
 
         <p id="summary">
-
-            Search for a city to see today's
-            weather summary.
-
+            Search for a city to see today's weather summary.
         </p>
 
     </section>
 
 
-    <!-- ALERTS -->
-
     <section class="card alerts-section">
 
         <h2>
-            ⚠️ Weather & Emergency Alerts
+            ⚠️ Weather Alerts
         </h2>
 
         <div id="alerts">
 
             <div class="no-alert">
 
-                🔵 Alert information will appear here.
+                🔵 Weather Summary does not provide official
+                emergency warnings.
 
                 <br><br>
 
-                Weather alerts should always be
-                checked against official local
-                authorities.
+                For important weather warnings, please check
+                your country's official meteorological or
+                emergency authority.
 
             </div>
 
@@ -260,8 +249,6 @@
 
     </section>
 
-
-    <!-- HOURLY FORECAST -->
 
     <section class="card forecast-section">
 
@@ -273,16 +260,13 @@
              class="hourly-container">
 
             <p>
-                Search for a city to see the
-                hourly forecast.
+                Search for a city to see the hourly forecast.
             </p>
 
         </div>
 
     </section>
 
-
-    <!-- 7 DAY FORECAST -->
 
     <section class="card forecast-section">
 
@@ -294,8 +278,7 @@
              class="daily-container">
 
             <p>
-                Search for a city to see the
-                7-day forecast.
+                Search for a city to see the 7-day forecast.
             </p>
 
         </div>
@@ -303,13 +286,13 @@
     </section>
 
 
-    <!-- SUNRISE / SUNSET -->
-
     <section class="card sun-section">
 
         <div class="sun-item">
 
-            <span>🌅</span>
+            <span aria-hidden="true">
+                🌅
+            </span>
 
             <strong id="sunrise">
                 --
@@ -324,7 +307,9 @@
 
         <div class="sun-item">
 
-            <span>🌇</span>
+            <span aria-hidden="true">
+                🌇
+            </span>
 
             <strong id="sunset">
                 --
@@ -339,19 +324,20 @@
     </section>
 
 
-    <!-- FOOTER -->
-
     <footer>
 
         <p>
             Weather data provided by
-            Open-Meteo.
+            <a href="https://open-meteo.com/"
+               target="_blank"
+               rel="noopener noreferrer">
+                Open-Meteo
+            </a>.
         </p>
 
         <p>
-            <a href="weather-sources.html">
-                Weather Sources
-            </a>
+            Weather information is provided for general
+            informational purposes only.
         </p>
 
         <div class="footer-links">
@@ -360,7 +346,11 @@
                 About
             </a>
 
-            <a href="privacy-policy.html">
+            <a href="sources.html">
+                Weather Sources
+            </a>
+
+            <a href="privacy.html">
                 Privacy Policy
             </a>
 
@@ -374,6 +364,11 @@
 
         </div>
 
+        <p class="copyright">
+            © <span id="copyrightYear"></span>
+            Weather Summary. All rights reserved.
+        </p>
+
     </footer>
 
 </main>
@@ -382,5 +377,4 @@
 <script src="script.js"></script>
 
 </body>
-
 </html>
