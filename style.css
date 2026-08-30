@@ -1,775 +1,353 @@
 /* =========================================
-   RESET
+WMO WEATHER ALERT SYSTEM
 ========================================= */
 
-* {
+/*
+IMPORTANT:
 
-    margin: 0;
+```
+This function expects YOUR server-side alert
+endpoint to return JSON.
 
-    padding: 0;
+Example:
 
-    box-sizing: border-box;
+/api/alerts?lat=6.9271&lon=79.8612
 
-}
+The server should obtain official CAP warning
+information and return only active warnings
+relevant to the requested location.
+
+Do NOT put private API credentials in this file.
+```
+
+*/
+
+async function getWeatherAlerts(latitude, longitude) {
+
+```
+try {
+
+    const response = await fetch(
+
+        `/api/alerts?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`
+
+    );
 
 
-/* =========================================
-   BODY
-========================================= */
+    if (!response.ok) {
 
-body {
-
-    min-height: 100vh;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background:
-        linear-gradient(
-            135deg,
-            #38bdf8,
-            #2563eb,
-            #1e1b4b
+        throw new Error(
+            "Weather alert request failed"
         );
 
-    color: white;
-
-    padding: 30px;
-
-}
-
-
-/* =========================================
-   MAIN APP
-========================================= */
-
-.app {
-
-    width: 100%;
-
-    max-width: 1000px;
-
-    margin: auto;
-
-}
-
-
-/* =========================================
-   HEADER
-========================================= */
-
-.header {
-
-    text-align: center;
-
-    margin-bottom: 30px;
-
-}
-
-
-.header h1 {
-
-    font-size: 40px;
-
-    margin-bottom: 10px;
-
-}
-
-
-.header p {
-
-    opacity: 0.8;
-
-    font-size: 16px;
-
-}
-
-
-/* =========================================
-   SEARCH
-========================================= */
-
-.search-section {
-
-    display: flex;
-
-    gap: 10px;
-
-    margin-bottom: 25px;
-
-}
-
-
-.search-section input {
-
-    flex: 1;
-
-    padding: 16px;
-
-    border: none;
-
-    border-radius: 12px;
-
-    outline: none;
-
-    font-size: 16px;
-
-}
-
-
-button {
-
-    border: none;
-
-    border-radius: 12px;
-
-    padding: 15px 20px;
-
-    background: #0ea5e9;
-
-    color: white;
-
-    font-size: 15px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: 0.2s;
-
-}
-
-
-button:hover {
-
-    background: #0284c7;
-
-    transform: translateY(-1px);
-
-}
-
-
-/* =========================================
-   CARDS
-========================================= */
-
-.card {
-
-    background:
-        rgba(255,255,255,0.13);
-
-    backdrop-filter:
-        blur(15px);
-
-    border:
-        1px solid
-        rgba(255,255,255,0.1);
-
-    border-radius: 20px;
-
-    padding: 25px;
-
-    margin-bottom: 20px;
-
-    box-shadow:
-        0 10px 30px
-        rgba(0,0,0,0.15);
-
-}
-
-
-/* =========================================
-   CURRENT WEATHER
-========================================= */
-
-.current-weather {
-
-    text-align: center;
-
-}
-
-
-#city {
-
-    font-size: 32px;
-
-    margin-bottom: 5px;
-
-}
-
-
-#date {
-
-    opacity: 0.7;
-
-}
-
-
-/* =========================================
-   MAIN WEATHER
-========================================= */
-
-.main-weather {
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    gap: 30px;
-
-    margin: 25px 0;
-
-}
-
-
-.weather-icon {
-
-    font-size: 90px;
-
-}
-
-
-#temperature {
-
-    font-size: 70px;
-
-    font-weight: bold;
-
-}
-
-
-#condition {
-
-    font-size: 21px;
-
-    margin: 5px 0 10px;
-
-}
-
-
-.temperature-area p {
-
-    opacity: 0.8;
-
-}
-
-
-/* =========================================
-   WEATHER DETAILS
-========================================= */
-
-.details {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap: 15px;
-
-}
-
-
-.detail {
-
-    padding: 18px;
-
-    border-radius: 15px;
-
-    background:
-        rgba(255,255,255,0.1);
-
-}
-
-
-.detail span {
-
-    display: block;
-
-    font-size: 27px;
-
-    margin-bottom: 8px;
-
-}
-
-
-.detail strong {
-
-    display: block;
-
-    font-size: 18px;
-
-}
-
-
-.detail small {
-
-    display: block;
-
-    margin-top: 5px;
-
-    opacity: 0.7;
-
-}
-
-
-/* =========================================
-   SUMMARY
-========================================= */
-
-.summary-card h2,
-.alerts-section h2,
-.forecast-section h2 {
-
-    margin-bottom: 15px;
-
-}
-
-
-.summary-card p {
-
-    line-height: 1.7;
-
-    font-size: 17px;
-
-}
-
-
-/* =========================================
-   ALERTS
-========================================= */
-
-.no-alert {
-
-    background:
-        rgba(59,130,246,0.2);
-
-    border-left:
-        5px solid #3b82f6;
-
-    padding: 18px;
-
-    border-radius: 10px;
-
-    line-height: 1.6;
-
-}
-
-
-.alert {
-
-    padding: 18px;
-
-    border-radius: 12px;
-
-    margin-bottom: 12px;
-
-}
-
-
-.alert h3 {
-
-    margin-bottom: 8px;
-
-}
-
-
-.alert p {
-
-    line-height: 1.5;
-
-}
-
-
-.alert-extreme {
-
-    background:
-        rgba(127,29,29,0.85);
-
-    border-left:
-        6px solid #ef4444;
-
-}
-
-
-.alert-severe {
-
-    background:
-        rgba(154,52,18,0.85);
-
-    border-left:
-        6px solid #f97316;
-
-}
-
-
-.alert-moderate {
-
-    background:
-        rgba(161,98,7,0.85);
-
-    border-left:
-        6px solid #facc15;
-
-}
-
-
-.alert-minor {
-
-    background:
-        rgba(30,64,175,0.85);
-
-    border-left:
-        6px solid #60a5fa;
-
-}
-
-
-/* =========================================
-   HOURLY FORECAST
-========================================= */
-
-.hourly-container {
-
-    display: flex;
-
-    gap: 12px;
-
-    overflow-x: auto;
-
-    padding-bottom: 10px;
-
-}
-
-
-.hour {
-
-    min-width: 120px;
-
-    padding: 15px;
-
-    text-align: center;
-
-    background:
-        rgba(255,255,255,0.1);
-
-    border-radius: 15px;
-
-    flex-shrink: 0;
-
-}
-
-
-.hour strong {
-
-    font-size: 14px;
-
-}
-
-
-.hour .icon {
-
-    font-size: 32px;
-
-    margin: 10px 0;
-
-}
-
-
-.hour .temp {
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-}
-
-
-.hour .condition {
-
-    font-size: 13px;
-
-    margin-top: 5px;
-
-}
-
-
-.hour .rain {
-
-    font-size: 13px;
-
-    margin-top: 8px;
-
-    opacity: 0.8;
-
-}
-
-
-/* =========================================
-   DAILY FORECAST
-========================================= */
-
-.daily-container {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-}
-
-
-.day {
-
-    display: grid;
-
-    grid-template-columns:
-        90px
-        60px
-        1fr
-        120px
-        100px;
-
-    align-items: center;
-
-    gap: 15px;
-
-    padding: 15px;
-
-    background:
-        rgba(255,255,255,0.1);
-
-    border-radius: 12px;
-
-}
-
-
-.day .icon {
-
-    font-size: 32px;
-
-}
-
-
-.day .temps {
-
-    font-weight: bold;
-
-}
-
-
-.day .rain {
-
-    font-size: 14px;
-
-    opacity: 0.8;
-
-}
-
-
-/* =========================================
-   SUNRISE / SUNSET
-========================================= */
-
-.sun-section {
-
-    display: flex;
-
-    justify-content: space-around;
-
-    text-align: center;
-
-}
-
-
-.sun-item {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 7px;
-
-}
-
-
-.sun-item span {
-
-    font-size: 35px;
-
-}
-
-
-.sun-item strong {
-
-    font-size: 20px;
-
-}
-
-
-.sun-item small {
-
-    opacity: 0.7;
-
-}
-
-
-/* =========================================
-   LOADING
-========================================= */
-
-.loading {
-
-    text-align: center;
-
-    padding: 15px;
-
-    background:
-        rgba(255,255,255,0.1);
-
-    border-radius: 10px;
-
-    margin-bottom: 20px;
-
-}
-
-
-.hidden {
-
-    display: none;
-
-}
-
-
-/* =========================================
-   ERROR
-========================================= */
-
-.error {
-
-    background:
-        rgba(239,68,68,0.3);
-
-    border-left:
-        5px solid #ef4444;
-
-    padding: 15px;
-
-    margin-bottom: 20px;
-
-    border-radius: 10px;
-
-}
-
-
-/* =========================================
-   FOOTER
-========================================= */
-
-footer {
-
-    text-align: center;
-
-    opacity: 0.6;
-
-    padding: 20px;
-
-    font-size: 13px;
-
-}
-
-
-/* =========================================
-   MOBILE
-========================================= */
-
-@media (max-width: 700px) {
-
-    body {
-
-        padding: 15px;
-
     }
 
 
-    .header h1 {
-
-        font-size: 29px;
-
-    }
+    const data =
+        await response.json();
 
 
-    .search-section {
-
-        flex-direction: column;
-
-    }
+    displayAlerts(data);
 
 
-    .main-weather {
+} catch (error) {
 
-        flex-direction: column;
-
-        gap: 10px;
-
-    }
-
-
-    .weather-icon {
-
-        font-size: 70px;
-
-    }
+    console.error(
+        "Alert system error:",
+        error
+    );
 
 
-    #temperature {
+    displayAlertError();
 
-        font-size: 55px;
+}
+```
 
-    }
+}
 
+/* =========================================
+DISPLAY ALERTS
+========================================= */
 
-    .details {
+function displayAlerts(data) {
 
-        grid-template-columns:
-            repeat(2, 1fr);
-
-    }
-
-
-    .day {
-
-        grid-template-columns:
-            60px
-            45px
-            1fr;
-
-    }
+```
+alertsElement.innerHTML = "";
 
 
-    .day .temps {
+if (
+    !data ||
+    !Array.isArray(data.alerts) ||
+    data.alerts.length === 0
+) {
 
-        text-align: right;
+    alertsElement.innerHTML = `
 
-    }
+        <div class="no-alert">
+
+            ✅ No active weather alerts
+            were found for this location.
+
+        </div>
+
+    `;
+
+    return;
+
+}
 
 
-    .day .rain {
-
-        display: none;
-
-    }
+data.alerts.forEach(function(alert) {
 
 
-    .sun-section {
+    const alertElement =
+        document.createElement("div");
 
-        gap: 30px;
 
-    }
+    const severity =
+        String(
+            alert.severity || "Unknown"
+        ).toLowerCase();
+
+
+    alertElement.className =
+        `alert ${getAlertClass(severity)}`;
+
+
+    const title =
+        escapeHTML(
+            alert.title || "Weather Alert"
+        );
+
+
+    const event =
+        escapeHTML(
+            alert.event || ""
+        );
+
+
+    const description =
+        escapeHTML(
+            alert.description || ""
+        );
+
+
+    const instruction =
+        escapeHTML(
+            alert.instruction || ""
+        );
+
+
+    const sender =
+        escapeHTML(
+            alert.sender || "Official authority"
+        );
+
+
+    const effective =
+        escapeHTML(
+            alert.effective || ""
+        );
+
+
+    const expires =
+        escapeHTML(
+            alert.expires || ""
+        );
+
+
+    const sourceURL =
+        alert.sourceURL || "";
+
+
+    alertElement.innerHTML = `
+
+        <h3>
+            ⚠️ ${title}
+        </h3>
+
+        ${
+            event
+                ? `<p><strong>Event:</strong> ${event}</p>`
+                : ""
+        }
+
+        ${
+            severity
+                ? `<p><strong>Severity:</strong> ${capitalizeFirstLetter(severity)}</p>`
+                : ""
+        }
+
+        ${
+            description
+                ? `<p>${description}</p>`
+                : ""
+        }
+
+        ${
+            instruction
+                ? `
+                    <p class="alert-instructions">
+                        <strong>Instructions:</strong><br>
+                        ${instruction}
+                    </p>
+                `
+                : ""
+        }
+
+        ${
+            effective || expires
+                ? `
+                    <p class="alert-time">
+                        ${
+                            effective
+                                ? `<strong>Effective:</strong> ${effective}<br>`
+                                : ""
+                        }
+
+                        ${
+                            expires
+                                ? `<strong>Expires:</strong> ${expires}`
+                                : ""
+                        }
+                    </p>
+                `
+                : ""
+        }
+
+        <p class="alert-source">
+
+            <strong>Issued by:</strong>
+            ${sender}
+
+            ${
+                sourceURL
+                    ? `
+                        <br><br>
+
+                        <a
+                            href="${escapeAttribute(sourceURL)}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View official warning
+                        </a>
+                    `
+                    : ""
+            }
+
+        </p>
+
+    `;
+
+
+    alertsElement.appendChild(
+        alertElement
+    );
+
+});
+```
+
+}
+
+/* =========================================
+ALERT SEVERITY
+========================================= */
+
+function getAlertClass(severity) {
+
+```
+if (severity.includes("extreme")) {
+
+    return "alert-extreme";
+
+}
+
+
+if (severity.includes("severe")) {
+
+    return "alert-severe";
+
+}
+
+
+if (severity.includes("moderate")) {
+
+    return "alert-moderate";
+
+}
+
+
+return "alert-minor";
+```
+
+}
+
+/* =========================================
+ALERT API ERROR
+========================================= */
+
+function displayAlertError() {
+
+```
+alertsElement.innerHTML = `
+
+    <div class="no-alert">
+
+        ⚠️ Weather alert information is
+        temporarily unavailable.
+
+        <br><br>
+
+        Please check your local official
+        meteorological authority for
+        current warnings.
+
+    </div>
+
+`;
+```
+
+}
+
+/* =========================================
+HTML SAFETY
+========================================= */
+
+function escapeHTML(value) {
+
+```
+return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+```
+
+}
+
+function escapeAttribute(value) {
+
+```
+return String(value)
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+```
+
+}
+
+function capitalizeFirstLetter(value) {
+
+```
+if (!value) {
+
+    return "";
+
+}
+
+return value.charAt(0).toUpperCase()
+    + value.slice(1);
+```
 
 }
