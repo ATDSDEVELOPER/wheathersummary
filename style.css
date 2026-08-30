@@ -8,25 +8,7 @@
     box-sizing: border-box;
 }
 
-.site-nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 25px;
-}
 
-.site-nav a {
-    color: white;
-    text-decoration: none;
-    padding: 10px 15px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.12);
-}
-
-.site-nav a:hover {
-    background: rgba(255,255,255,0.25);
-}
 /* =========================================
    BODY
 ========================================= */
@@ -50,12 +32,13 @@ body {
 
     color: white;
 
-    padding: 30px;
+    padding: 20px;
+
 }
 
 
 /* =========================================
-   APP
+   MAIN APP
 ========================================= */
 
 .app {
@@ -65,6 +48,59 @@ body {
     max-width: 1000px;
 
     margin: auto;
+
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+.site-nav {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.site-nav a {
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 9px 13px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,255,255,0.12);
+
+    font-size: 14px;
+
+    transition: 0.2s;
+
+}
+
+
+.site-nav a:hover {
+
+    background:
+        rgba(255,255,255,0.25);
+
+    transform:
+        translateY(-1px);
+
 }
 
 
@@ -77,6 +113,7 @@ body {
     text-align: center;
 
     margin-bottom: 30px;
+
 }
 
 
@@ -85,6 +122,7 @@ body {
     font-size: 40px;
 
     margin-bottom: 10px;
+
 }
 
 
@@ -93,6 +131,7 @@ body {
     opacity: 0.85;
 
     font-size: 16px;
+
 }
 
 
@@ -106,7 +145,8 @@ body {
 
     gap: 10px;
 
-    margin-bottom: 15px;
+    margin-bottom: 25px;
+
 }
 
 
@@ -123,6 +163,7 @@ body {
     outline: none;
 
     font-size: 16px;
+
 }
 
 
@@ -145,6 +186,7 @@ button {
     cursor: pointer;
 
     transition: 0.2s;
+
 }
 
 
@@ -152,7 +194,9 @@ button:hover {
 
     background: #0284c7;
 
-    transform: translateY(-1px);
+    transform:
+        translateY(-1px);
+
 }
 
 
@@ -160,30 +204,10 @@ button:disabled {
 
     opacity: 0.6;
 
-    cursor: wait;
+    cursor: not-allowed;
 
     transform: none;
-}
 
-
-/* =========================================
-   LOCATION STATUS
-========================================= */
-
-.location-status {
-
-    background:
-        rgba(255,255,255,0.12);
-
-    padding: 14px;
-
-    border-radius: 10px;
-
-    margin-bottom: 15px;
-
-    text-align: center;
-
-    line-height: 1.5;
 }
 
 
@@ -199,6 +223,9 @@ button:disabled {
     backdrop-filter:
         blur(15px);
 
+    -webkit-backdrop-filter:
+        blur(15px);
+
     border:
         1px solid
         rgba(255,255,255,0.1);
@@ -212,6 +239,7 @@ button:disabled {
     box-shadow:
         0 10px 30px
         rgba(0,0,0,0.15);
+
 }
 
 
@@ -222,6 +250,7 @@ button:disabled {
 .current-weather {
 
     text-align: center;
+
 }
 
 
@@ -230,12 +259,14 @@ button:disabled {
     font-size: 32px;
 
     margin-bottom: 5px;
+
 }
 
 
 #date {
 
-    opacity: 0.75;
+    opacity: 0.7;
+
 }
 
 
@@ -254,12 +285,14 @@ button:disabled {
     gap: 30px;
 
     margin: 25px 0;
+
 }
 
 
 .weather-icon {
 
     font-size: 90px;
+
 }
 
 
@@ -268,6 +301,7 @@ button:disabled {
     font-size: 70px;
 
     font-weight: bold;
+
 }
 
 
@@ -275,18 +309,21 @@ button:disabled {
 
     font-size: 21px;
 
-    margin: 5px 0 10px;
+    margin:
+        5px 0 10px;
+
 }
 
 
 .temperature-area p {
 
     opacity: 0.8;
+
 }
 
 
 /* =========================================
-   DETAILS
+   WEATHER DETAILS
 ========================================= */
 
 .details {
@@ -297,6 +334,7 @@ button:disabled {
         repeat(4, 1fr);
 
     gap: 15px;
+
 }
 
 
@@ -308,6 +346,7 @@ button:disabled {
 
     background:
         rgba(255,255,255,0.1);
+
 }
 
 
@@ -318,6 +357,7 @@ button:disabled {
     font-size: 27px;
 
     margin-bottom: 8px;
+
 }
 
 
@@ -326,6 +366,7 @@ button:disabled {
     display: block;
 
     font-size: 18px;
+
 }
 
 
@@ -336,6 +377,7 @@ button:disabled {
     margin-top: 5px;
 
     opacity: 0.7;
+
 }
 
 
@@ -348,6 +390,7 @@ button:disabled {
 .forecast-section h2 {
 
     margin-bottom: 15px;
+
 }
 
 
@@ -356,6 +399,37 @@ button:disabled {
     line-height: 1.7;
 
     font-size: 17px;
+
+}
+
+
+/* =========================================
+   ADVERTISEMENT
+========================================= */
+
+.ad-container {
+
+    min-height: 90px;
+
+    margin:
+        20px 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,0.06);
+
+    color:
+        rgba(255,255,255,0.55);
+
+    font-size: 12px;
+
 }
 
 
@@ -376,6 +450,7 @@ button:disabled {
     border-radius: 10px;
 
     line-height: 1.6;
+
 }
 
 
@@ -386,18 +461,21 @@ button:disabled {
     border-radius: 12px;
 
     margin-bottom: 12px;
+
 }
 
 
 .alert h3 {
 
     margin-bottom: 8px;
+
 }
 
 
 .alert p {
 
     line-height: 1.5;
+
 }
 
 
@@ -408,6 +486,7 @@ button:disabled {
 
     border-left:
         6px solid #ef4444;
+
 }
 
 
@@ -418,6 +497,7 @@ button:disabled {
 
     border-left:
         6px solid #f97316;
+
 }
 
 
@@ -428,6 +508,7 @@ button:disabled {
 
     border-left:
         6px solid #facc15;
+
 }
 
 
@@ -438,11 +519,12 @@ button:disabled {
 
     border-left:
         6px solid #60a5fa;
+
 }
 
 
 /* =========================================
-   HOURLY
+   HOURLY FORECAST
 ========================================= */
 
 .hourly-container {
@@ -454,6 +536,7 @@ button:disabled {
     overflow-x: auto;
 
     padding-bottom: 10px;
+
 }
 
 
@@ -471,12 +554,14 @@ button:disabled {
     border-radius: 15px;
 
     flex-shrink: 0;
+
 }
 
 
 .hour strong {
 
     font-size: 14px;
+
 }
 
 
@@ -485,6 +570,7 @@ button:disabled {
     font-size: 32px;
 
     margin: 10px 0;
+
 }
 
 
@@ -493,6 +579,7 @@ button:disabled {
     font-size: 20px;
 
     font-weight: bold;
+
 }
 
 
@@ -501,6 +588,7 @@ button:disabled {
     font-size: 13px;
 
     margin-top: 5px;
+
 }
 
 
@@ -511,11 +599,12 @@ button:disabled {
     margin-top: 8px;
 
     opacity: 0.8;
+
 }
 
 
 /* =========================================
-   DAILY
+   DAILY FORECAST
 ========================================= */
 
 .daily-container {
@@ -525,6 +614,7 @@ button:disabled {
     flex-direction: column;
 
     gap: 10px;
+
 }
 
 
@@ -549,18 +639,21 @@ button:disabled {
         rgba(255,255,255,0.1);
 
     border-radius: 12px;
+
 }
 
 
 .day .icon {
 
     font-size: 32px;
+
 }
 
 
 .day .temps {
 
     font-weight: bold;
+
 }
 
 
@@ -569,6 +662,7 @@ button:disabled {
     font-size: 14px;
 
     opacity: 0.8;
+
 }
 
 
@@ -583,6 +677,7 @@ button:disabled {
     justify-content: space-around;
 
     text-align: center;
+
 }
 
 
@@ -593,24 +688,28 @@ button:disabled {
     flex-direction: column;
 
     gap: 7px;
+
 }
 
 
 .sun-item span {
 
     font-size: 35px;
+
 }
 
 
 .sun-item strong {
 
     font-size: 20px;
+
 }
 
 
 .sun-item small {
 
     opacity: 0.7;
+
 }
 
 
@@ -630,6 +729,7 @@ button:disabled {
     border-radius: 10px;
 
     margin-bottom: 20px;
+
 }
 
 
@@ -651,7 +751,8 @@ button:disabled {
 
     border-radius: 10px;
 
-    line-height: 1.6;
+    line-height: 1.5;
+
 }
 
 
@@ -661,7 +762,8 @@ button:disabled {
 
 .hidden {
 
-    display: none !important;
+    display: none;
+
 }
 
 
@@ -673,13 +775,50 @@ footer {
 
     text-align: center;
 
-    opacity: 0.65;
+    opacity: 0.75;
 
-    padding: 20px;
+    padding: 25px 10px;
 
     font-size: 13px;
 
-    line-height: 1.8;
+}
+
+
+.footer-links {
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin: 15px 0;
+
+}
+
+
+.footer-links a {
+
+    color: white;
+
+    text-decoration: none;
+
+}
+
+
+.footer-links a:hover {
+
+    text-decoration: underline;
+
+}
+
+
+.copyright {
+
+    opacity: 0.65;
+
 }
 
 
@@ -689,21 +828,41 @@ footer {
 
 @media (max-width: 700px) {
 
+
     body {
 
         padding: 15px;
+
+    }
+
+
+    .site-nav {
+
+        gap: 6px;
+
+    }
+
+
+    .site-nav a {
+
+        font-size: 13px;
+
+        padding: 8px 10px;
+
     }
 
 
     .header h1 {
 
         font-size: 29px;
+
     }
 
 
     .search-section {
 
         flex-direction: column;
+
     }
 
 
@@ -712,18 +871,21 @@ footer {
         flex-direction: column;
 
         gap: 10px;
+
     }
 
 
     .weather-icon {
 
         font-size: 70px;
+
     }
 
 
     #temperature {
 
         font-size: 55px;
+
     }
 
 
@@ -731,6 +893,7 @@ footer {
 
         grid-template-columns:
             repeat(2, 1fr);
+
     }
 
 
@@ -740,24 +903,84 @@ footer {
             60px
             45px
             1fr;
+
     }
 
 
     .day .temps {
 
         text-align: right;
+
     }
 
 
     .day .rain {
 
         display: none;
+
     }
 
 
     .sun-section {
 
         gap: 30px;
+
+    }
+
+}
+
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 420px) {
+
+
+    .details {
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 8px;
+
+    }
+
+
+    .detail {
+
+        padding: 12px;
+
+    }
+
+
+    .detail span {
+
+        font-size: 23px;
+
+    }
+
+
+    .detail strong {
+
+        font-size: 16px;
+
+    }
+
+
+    .card {
+
+        padding: 18px;
+
+    }
+
+
+    .footer-links {
+
+        flex-direction: column;
+
+        gap: 8px;
+
     }
 
 }
