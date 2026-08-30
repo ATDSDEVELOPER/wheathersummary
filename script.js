@@ -1135,7 +1135,7 @@ function getMyLocation() {
                 case error.PERMISSION_DENIED:
 
                     showError(
-                        "Location permission denied or blocked by system overlays. Please enable location or close floating apps, then try again."
+                        "Location permission denied or blocked by system overlays. Please enable location( Open Settings on your phone->Apps->Special App Access->Display over other apps/search 'Display over other apps' and temporarily turn off permission for any app currently 'Display over other apps') or close floating apps, then try again."
                     );
 
                     break;
