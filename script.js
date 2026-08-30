@@ -1,13 +1,8 @@
-```javascript
-/* =========================================================
-   WEATHER SUMMARY
-   Open-Meteo Weather + Geocoding
-========================================================= */
+"use strict";
 
-
-/* =========================================================
+/* =========================================
    GET HTML ELEMENTS
-========================================================= */
+========================================= */
 
 const cityInput =
     document.getElementById("cityInput");
@@ -72,17 +67,24 @@ const loadingElement =
 const errorElement =
     document.getElementById("error");
 
-
-/* =========================================================
-   REQUEST CONTROL
-========================================================= */
-
-let requestInProgress = false;
+const locationStatusElement =
+    document.getElementById("locationStatus");
 
 
-/* =========================================================
+/* =========================================
+   API URLS
+========================================= */
+
+const WEATHER_API =
+    "https://api.open-meteo.com/v1/forecast";
+
+const GEOCODING_API =
+    "https://geocoding-api.open-meteo.com/v1/search";
+
+
+/* =========================================
    BUTTON EVENTS
-========================================================= */
+========================================= */
 
 searchButton.addEventListener(
     "click",
@@ -92,7 +94,7 @@ searchButton.addEventListener(
 
 cityInput.addEventListener(
     "keydown",
-    function(event) {
+    function (event) {
 
         if (event.key === "Enter") {
 
@@ -110,9 +112,9 @@ locationButton.addEventListener(
 );
 
 
-/* =========================================================
-   SEARCH WEATHER BY CITY
-========================================================= */
+/* =========================================
+   SEARCH CITY
+========================================= */
 
 async function searchWeather() {
 
@@ -127,44 +129,42 @@ async function searchWeather() {
         );
 
         return;
-    }
 
-
-    if (requestInProgress) {
-
-        return;
     }
 
 
     try {
 
-        requestInProgress = true;
+        showLoading();
 
-        setButtonsDisabled(true);
+        hideError();
 
-        showLoading(
-            "Finding city..."
-        );
+        hideLocationStatus();
 
 
         const url =
-            "https://geocoding-api.open-meteo.com/v1/search?" +
-            "name=" +
-            encodeURIComponent(city) +
-            "&count=1" +
-            "&language=en" +
-            "&format=json";
+            `${GEOCODING_API}?` +
+            `name=${encodeURIComponent(city)}` +
+            `&count=1` +
+            `&language=en` +
+            `&format=json`;
 
 
         const response =
-            await fetch(url);
+            await fetch(
+                url,
+                {
+                    method: "GET"
+                }
+            );
 
 
         if (!response.ok) {
 
             throw new Error(
-                "The location service is unavailable."
+                `Geocoding API returned HTTP ${response.status}`
             );
+
         }
 
 
@@ -177,9 +177,12 @@ async function searchWeather() {
             data.results.length === 0
         ) {
 
-            throw new Error(
+            showError(
                 "City not found. Please check the spelling and try again."
             );
+
+            return;
+
         }
 
 
@@ -187,11 +190,27 @@ async function searchWeather() {
             data.results[0];
 
 
+        if (
+            !Number.isFinite(
+                Number(location.latitude)
+            ) ||
+            !Number.isFinite(
+                Number(location.longitude)
+            )
+        ) {
+
+            throw new Error(
+                "The location coordinates are invalid."
+            );
+
+        }
+
+
         await getWeather(
 
-            location.latitude,
+            Number(location.latitude),
 
-            location.longitude,
+            Number(location.longitude),
 
             location.name,
 
@@ -207,334 +226,23 @@ async function searchWeather() {
             error
         );
 
-        showError(
-            error.message ||
-            "Unable to find this city."
-        );
 
+        showError(
+            "Unable to find this city. Please check your internet connection and try again."
+        );
 
     } finally {
 
-        requestInProgress = false;
-
-        setButtonsDisabled(false);
-
         hideLoading();
+
     }
 
 }
 
 
-/* =========================================================
-   MY LOCATION
-========================================================= */
-
-function getMyLocation() {
-
-    if (requestInProgress) {
-
-        return;
-    }
-
-
-    /*
-       Check whether browser supports geolocation.
-    */
-
-    if (!navigator.geolocation) {
-
-        showError(
-            "Location detection is not supported by your browser. Please search for your city instead."
-        );
-
-        return;
-    }
-
-
-    /*
-       Geolocation requires HTTPS.
-
-       GitHub Pages uses HTTPS, so your website
-       should pass this check.
-    */
-
-    if (
-        window.location.protocol !== "https:" &&
-        window.location.hostname !== "localhost" &&
-        window.location.hostname !== "127.0.0.1"
-    ) {
-
-        showError(
-            "Location access requires HTTPS. Please open the HTTPS version of this website."
-        );
-
-        return;
-    }
-
-
-    requestInProgress = true;
-
-    setButtonsDisabled(true);
-
-    showLoading(
-        "Requesting your location..."
-    );
-
-
-    /*
-       Ask browser for location.
-    */
-
-    navigator.geolocation.getCurrentPosition(
-
-        async function(position) {
-
-            try {
-
-                const latitude =
-                    position.coords.latitude;
-
-                const longitude =
-                    position.coords.longitude;
-
-
-                /*
-                   Validate coordinates.
-                */
-
-                if (
-                    !Number.isFinite(latitude) ||
-                    !Number.isFinite(longitude)
-                ) {
-
-                    throw new Error(
-                        "Your browser returned an invalid location."
-                    );
-                }
-
-
-                showLoading(
-                    "Loading weather for your location..."
-                );
-
-
-                /*
-                   Reverse geocode coordinates so
-                   we can display the city name.
-                */
-
-                const location =
-                    await reverseGeocode(
-                        latitude,
-                        longitude
-                    );
-
-
-                const locationName =
-                    location.name ||
-                    "Your Location";
-
-
-                const country =
-                    location.country ||
-                    "";
-
-
-                /*
-                   Load weather.
-                */
-
-                await getWeather(
-
-                    latitude,
-
-                    longitude,
-
-                    locationName,
-
-                    country
-
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "My Location error:",
-                    error
-                );
-
-
-                showError(
-                    error.message ||
-                    "Unable to load weather for your location."
-                );
-
-            } finally {
-
-                requestInProgress = false;
-
-                setButtonsDisabled(false);
-
-                hideLoading();
-            }
-
-        },
-
-
-        function(error) {
-
-            console.error(
-                "Geolocation error:",
-                error
-            );
-
-
-            let message =
-                "Unable to access your location.";
-
-
-            /*
-               Different browser location errors.
-            */
-
-            switch (error.code) {
-
-                case error.PERMISSION_DENIED:
-
-                    message =
-                        "Location permission was denied. Please allow location access in your browser settings, then click My Location again.";
-
-                    break;
-
-
-                case error.POSITION_UNAVAILABLE:
-
-                    message =
-                        "Your location could not be determined. Check your device's location services or search for your city instead.";
-
-                    break;
-
-
-                case error.TIMEOUT:
-
-                    message =
-                        "Location request timed out. Please try My Location again.";
-
-                    break;
-
-
-                default:
-
-                    message =
-                        "Unable to access your location. Please try again or search for your city.";
-
-            }
-
-
-            showError(message);
-
-            requestInProgress = false;
-
-            setButtonsDisabled(false);
-
-            hideLoading();
-        },
-
-
-        {
-            enableHighAccuracy: false,
-
-            timeout: 15000,
-
-            maximumAge: 300000
-        }
-
-    );
-
-}
-
-
-/* =========================================================
-   REVERSE GEOCODING
-========================================================= */
-
-async function reverseGeocode(
-    latitude,
-    longitude
-) {
-
-    const url =
-        "https://geocoding-api.open-meteo.com/v1/reverse?" +
-        "latitude=" +
-        encodeURIComponent(latitude) +
-        "&longitude=" +
-        encodeURIComponent(longitude) +
-        "&count=1" +
-        "&language=en" +
-        "&format=json";
-
-
-    try {
-
-        const response =
-            await fetch(url);
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Reverse location service is unavailable."
-            );
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            data.results &&
-            data.results.length > 0
-        ) {
-
-            return data.results[0];
-        }
-
-
-        /*
-           Reverse geocoding is helpful but not
-           required for weather.
-
-           If it fails, still use coordinates.
-        */
-
-        return {
-            name: "Your Location",
-            country: ""
-        };
-
-
-    } catch (error) {
-
-        console.warn(
-            "Reverse geocoding failed:",
-            error
-        );
-
-
-        return {
-            name: "Your Location",
-            country: ""
-        };
-    }
-
-}
-
-
-/* =========================================================
+/* =========================================
    GET WEATHER
-========================================================= */
+========================================= */
 
 async function getWeather(
     latitude,
@@ -545,60 +253,114 @@ async function getWeather(
 
     try {
 
-        showLoading(
-            "Loading weather information..."
-        );
+        showLoading();
+
+        hideError();
+
+
+        /* Validate coordinates */
+
+        if (
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude)
+        ) {
+
+            throw new Error(
+                "Invalid latitude or longitude."
+            );
+
+        }
+
+
+        if (
+            latitude < -90 ||
+            latitude > 90 ||
+            longitude < -180 ||
+            longitude > 180
+        ) {
+
+            throw new Error(
+                "Coordinates are outside the valid range."
+            );
+
+        }
 
 
         /*
-           Open-Meteo forecast API.
-        */
+         * Open-Meteo forecast request.
+         */
+
+        const params =
+            new URLSearchParams({
+
+                latitude:
+                    latitude.toString(),
+
+                longitude:
+                    longitude.toString(),
+
+                current:
+                    [
+                        "temperature_2m",
+                        "relative_humidity_2m",
+                        "apparent_temperature",
+                        "pressure_msl",
+                        "wind_speed_10m",
+                        "weather_code"
+                    ].join(","),
+
+                hourly:
+                    [
+                        "temperature_2m",
+                        "precipitation_probability",
+                        "weather_code",
+                        "wind_speed_10m"
+                    ].join(","),
+
+                daily:
+                    [
+                        "weather_code",
+                        "temperature_2m_max",
+                        "temperature_2m_min",
+                        "precipitation_probability_max",
+                        "sunrise",
+                        "sunset"
+                    ].join(","),
+
+                timezone:
+                    "auto",
+
+                forecast_days:
+                    "7"
+
+            });
+
 
         const url =
-            "https://api.open-meteo.com/v1/forecast?" +
+            `${WEATHER_API}?${params.toString()}`;
 
-            "latitude=" +
-            encodeURIComponent(latitude) +
 
-            "&longitude=" +
-            encodeURIComponent(longitude) +
-
-            "&current=" +
-            "temperature_2m," +
-            "relative_humidity_2m," +
-            "apparent_temperature," +
-            "pressure_msl," +
-            "wind_speed_10m," +
-            "weather_code" +
-
-            "&hourly=" +
-            "temperature_2m," +
-            "precipitation_probability," +
-            "weather_code," +
-            "wind_speed_10m" +
-
-            "&daily=" +
-            "weather_code," +
-            "temperature_2m_max," +
-            "temperature_2m_min," +
-            "precipitation_probability_max," +
-            "sunrise," +
-            "sunset" +
-
-            "&timezone=auto" +
-
-            "&forecast_days=7";
+        console.log(
+            "Weather request:",
+            url
+        );
 
 
         const response =
-            await fetch(url);
+            await fetch(
+                url,
+                {
+                    method: "GET"
+                }
+            );
 
 
         if (!response.ok) {
 
             throw new Error(
-                "The weather service is currently unavailable."
+                `Weather API returned HTTP ${response.status}`
             );
+
         }
 
 
@@ -606,9 +368,16 @@ async function getWeather(
             await response.json();
 
 
+        console.log(
+            "Weather data:",
+            data
+        );
+
+
         /*
-           Check API response.
-        */
+         * Check that the API returned
+         * the important data sections.
+         */
 
         if (
             !data.current ||
@@ -617,14 +386,13 @@ async function getWeather(
         ) {
 
             throw new Error(
-                "The weather service returned incomplete data."
+                "The weather API returned incomplete data."
             );
+
         }
 
 
-        /*
-           Display all weather information.
-        */
+        /* Display all weather information */
 
         displayCurrentWeather(
             data,
@@ -656,30 +424,64 @@ async function getWeather(
         displayNoAlerts();
 
 
-        hideError();
+        /*
+         * Tell the user that location
+         * weather was successfully loaded.
+         */
+
+        if (
+            name === "Your Location"
+        ) {
+
+            showLocationStatus(
+                "📍 Weather loaded successfully for your current location."
+            );
+
+        }
 
 
     } catch (error) {
 
         console.error(
-            "Weather API error:",
+            "Weather loading error:",
             error
         );
 
 
-        showError(
-            error.message ||
-            "Unable to load weather information."
-        );
+        /*
+         * IMPORTANT:
+         * Show a useful error instead of
+         * hiding the real problem.
+         */
+
+        if (
+            name === "Your Location"
+        ) {
+
+            showError(
+                "Unable to load weather for your location. Please check your internet connection and try again."
+            );
+
+        } else {
+
+            showError(
+                "Unable to load weather information. Please try again."
+            );
+
+        }
+
+    } finally {
+
+        hideLoading();
 
     }
 
 }
 
 
-/* =========================================================
+/* =========================================
    DISPLAY CURRENT WEATHER
-========================================================= */
+========================================= */
 
 function displayCurrentWeather(
     data,
@@ -691,10 +493,6 @@ function displayCurrentWeather(
         data.current;
 
 
-    /*
-       Location name.
-    */
-
     cityElement.textContent =
         country
             ? `${name}, ${country}`
@@ -702,97 +500,53 @@ function displayCurrentWeather(
 
 
     /*
-       Date/time.
-    */
-
-    const localDate =
-        new Date(current.time);
-
+     * Open-Meteo returns local time when
+     * timezone=auto is used.
+     *
+     * We display the API timestamp directly
+     * rather than relying on the user's timezone.
+     */
 
     dateElement.textContent =
-        localDate.toLocaleString(
-            "en-US",
-            {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit"
-            }
+        formatApiDateTime(
+            current.time
         );
 
 
-    /*
-       Temperature.
-    */
-
     temperatureElement.textContent =
         `${Math.round(
-            current.temperature_2m
+            Number(current.temperature_2m)
         )}°C`;
 
-
-    /*
-       Feels like.
-    */
 
     feelsLikeElement.textContent =
         `${Math.round(
-            current.apparent_temperature
+            Number(current.apparent_temperature)
         )}°C`;
 
 
-    /*
-       Humidity.
-    */
-
     humidityElement.textContent =
-        `${current.relative_humidity_2m}%`;
+        `${Math.round(
+            Number(current.relative_humidity_2m)
+        )}%`;
 
-
-    /*
-       Wind.
-    */
 
     windElement.textContent =
         `${Math.round(
-            current.wind_speed_10m
+            Number(current.wind_speed_10m)
         )} km/h`;
 
 
-    /*
-       Pressure.
-    */
-
     pressureElement.textContent =
         `${Math.round(
-            current.pressure_msl
+            Number(current.pressure_msl)
         )} hPa`;
 
 
-    /*
-       Current weather code.
-    */
-
-    const code =
-        current.weather_code;
-
-
-    conditionElement.textContent =
-        getWeatherDescription(code);
-
-
-    weatherIconElement.textContent =
-        getWeatherIcon(code);
-
-
-    /*
-       Rain probability.
-    */
-
     const currentHour =
         findCurrentHourIndex(
-            data.hourly
+            data.hourly,
+            current.time
         );
 
 
@@ -801,50 +555,75 @@ function displayCurrentWeather(
 
     if (
         currentHour >= 0 &&
-        data.hourly.precipitation_probability &&
-        data.hourly.precipitation_probability[currentHour] !== undefined
+        Array.isArray(
+            data.hourly.precipitation_probability
+        )
     ) {
 
         rainChance =
-            data.hourly.precipitation_probability[
-                currentHour
-            ];
+            Number(
+                data.hourly
+                    .precipitation_probability[
+                        currentHour
+                    ]
+            ) || 0;
+
     }
 
 
     rainChanceElement.textContent =
-        `${rainChance}%`;
+        `${Math.round(rainChance)}%`;
+
+
+    const code =
+        Number(current.weather_code);
+
+
+    conditionElement.textContent =
+        getWeatherDescription(
+            code
+        );
+
+
+    weatherIconElement.textContent =
+        getWeatherIcon(
+            code
+        );
+
 }
 
 
-/* =========================================================
+/* =========================================
    FIND CURRENT HOUR
-========================================================= */
+========================================= */
 
-function findCurrentHourIndex(hourly) {
+function findCurrentHourIndex(
+    hourly,
+    currentTime
+) {
 
     if (
         !hourly ||
-        !hourly.time ||
-        hourly.time.length === 0
+        !Array.isArray(hourly.time)
     ) {
 
         return 0;
+
     }
 
 
-    const now =
-        new Date();
-
-
     /*
-       Find closest forecast hour.
-    */
+     * Open-Meteo's timezone=auto returns
+     * local timestamps.
+     *
+     * Compare the YYYY-MM-DDTHH:MM parts
+     * instead of converting them through
+     * the browser's timezone.
+     */
 
-    let closestIndex = 0;
-
-    let smallestDifference =
-        Infinity;
+    const target =
+        String(currentTime)
+            .slice(0, 16);
 
 
     for (
@@ -853,192 +632,149 @@ function findCurrentHourIndex(hourly) {
         i++
     ) {
 
-        const time =
-            new Date(
-                hourly.time[i]
-            );
-
-
-        const difference =
-            Math.abs(
-                time.getTime() -
-                now.getTime()
-            );
-
-
         if (
-            difference <
-            smallestDifference
+            String(hourly.time[i])
+                .slice(0, 16) >= target
         ) {
 
-            smallestDifference =
-                difference;
+            return i;
 
-            closestIndex =
-                i;
         }
+
     }
 
 
-    return closestIndex;
+    return 0;
+
 }
 
 
-/* =========================================================
+/* =========================================
    WEATHER DESCRIPTION
-========================================================= */
+========================================= */
 
 function getWeatherDescription(code) {
 
     if (code === 0) {
-
         return "Clear sky";
     }
 
-
     if (code === 1) {
-
         return "Mainly clear";
     }
 
-
     if (code === 2) {
-
         return "Partly cloudy";
     }
 
-
     if (code === 3) {
-
         return "Overcast";
     }
 
-
     if ([45, 48].includes(code)) {
-
         return "Foggy";
     }
 
-
     if ([51, 53, 55].includes(code)) {
-
         return "Drizzle";
     }
 
-
     if ([56, 57].includes(code)) {
-
         return "Freezing drizzle";
     }
 
-
     if ([61, 63, 65].includes(code)) {
-
         return "Rain";
     }
 
-
     if ([66, 67].includes(code)) {
-
         return "Freezing rain";
     }
 
-
     if ([71, 73, 75, 77].includes(code)) {
-
         return "Snow";
     }
 
-
     if ([80, 81, 82].includes(code)) {
-
         return "Rain showers";
     }
 
-
     if ([85, 86].includes(code)) {
-
         return "Snow showers";
     }
 
-
     if ([95, 96, 99].includes(code)) {
-
         return "Thunderstorm";
     }
-
 
     return "Unknown weather";
 }
 
 
-/* =========================================================
+/* =========================================
    WEATHER ICON
-========================================================= */
+========================================= */
 
 function getWeatherIcon(code) {
 
     if (code === 0) {
-
         return "☀️";
     }
 
-
     if ([1, 2].includes(code)) {
-
         return "⛅";
     }
 
-
     if (code === 3) {
-
         return "☁️";
     }
 
-
     if ([45, 48].includes(code)) {
-
         return "🌫️";
     }
 
-
-    if ([51, 53, 55, 56, 57].includes(code)) {
-
+    if (
+        [51, 53, 55, 56, 57]
+            .includes(code)
+    ) {
         return "🌦️";
     }
 
-
-    if ([61, 63, 65, 66, 67].includes(code)) {
-
+    if (
+        [61, 63, 65, 66, 67]
+            .includes(code)
+    ) {
         return "🌧️";
     }
 
-
-    if ([71, 73, 75, 77, 85, 86].includes(code)) {
-
+    if (
+        [71, 73, 75, 77, 85, 86]
+            .includes(code)
+    ) {
         return "❄️";
     }
 
-
-    if ([80, 81, 82].includes(code)) {
-
+    if (
+        [80, 81, 82]
+            .includes(code)
+    ) {
         return "🌦️";
     }
 
-
-    if ([95, 96, 99].includes(code)) {
-
+    if (
+        [95, 96, 99]
+            .includes(code)
+    ) {
         return "⛈️";
     }
-
 
     return "🌤️";
 }
 
 
-/* =========================================================
+/* =========================================
    WEATHER SUMMARY
-========================================================= */
+========================================= */
 
 function displaySummary(data) {
 
@@ -1047,28 +783,35 @@ function displaySummary(data) {
 
 
     const code =
-        current.weather_code;
+        Number(current.weather_code);
 
 
     const temperature =
         Math.round(
-            current.temperature_2m
+            Number(
+                current.temperature_2m
+            )
         );
 
 
     const humidity =
-        current.relative_humidity_2m;
+        Number(
+            current.relative_humidity_2m
+        );
 
 
     const wind =
         Math.round(
-            current.wind_speed_10m
+            Number(
+                current.wind_speed_10m
+            )
         );
 
 
     const currentHour =
         findCurrentHourIndex(
-            data.hourly
+            data.hourly,
+            current.time
         );
 
 
@@ -1077,14 +820,18 @@ function displaySummary(data) {
 
     if (
         currentHour >= 0 &&
-        data.hourly.precipitation_probability
+        data.hourly
+            .precipitation_probability
     ) {
 
         rainChance =
-            data.hourly
-                .precipitation_probability[
-                    currentHour
-                ];
+            Number(
+                data.hourly
+                    .precipitation_probability[
+                        currentHour
+                    ]
+            ) || 0;
+
     }
 
 
@@ -1095,14 +842,14 @@ function displaySummary(data) {
     if (rainChance >= 70) {
 
         summary +=
-            "There is a high chance of rain. Carrying an umbrella may be useful. ";
+            "There is a high chance of rain, so carrying an umbrella may be useful. ";
 
     }
 
     else if (rainChance >= 40) {
 
         summary +=
-            "There is a moderate chance of rain. ";
+            "There is a moderate chance of rain today. ";
 
     }
 
@@ -1110,6 +857,7 @@ function displaySummary(data) {
 
         summary +=
             "There is currently a low chance of rain. ";
+
     }
 
 
@@ -1124,6 +872,7 @@ function displaySummary(data) {
 
         summary +=
             "Winds may be noticeable. ";
+
     }
 
 
@@ -1145,17 +894,19 @@ function displaySummary(data) {
 
         summary +=
             "Humidity is relatively low.";
+
     }
 
 
     summaryElement.textContent =
         summary;
+
 }
 
 
-/* =========================================================
+/* =========================================
    HOURLY FORECAST
-========================================================= */
+========================================= */
 
 function displayHourlyForecast(data) {
 
@@ -1163,16 +914,19 @@ function displayHourlyForecast(data) {
         data.hourly;
 
 
-    hourlyElement.innerHTML = "";
+    hourlyElement.innerHTML =
+        "";
 
 
     const startIndex =
         findCurrentHourIndex(
-            hourly
+            hourly,
+            data.current.time
         );
 
 
-    const hoursToShow = 24;
+    const hoursToShow =
+        24;
 
 
     for (
@@ -1186,32 +940,28 @@ function displayHourlyForecast(data) {
         ) {
 
             break;
+
         }
-
-
-        const time =
-            new Date(
-                hourly.time[i]
-            );
 
 
         const temperature =
             Math.round(
-                hourly.temperature_2m[i]
+                Number(
+                    hourly.temperature_2m[i]
+                )
             );
 
 
         const rain =
-            hourly.precipitation_probability[i] ?? 0;
+            Number(
+                hourly
+                    .precipitation_probability[i]
+            ) || 0;
 
 
         const code =
-            hourly.weather_code[i];
-
-
-        const wind =
-            Math.round(
-                hourly.wind_speed_10m[i]
+            Number(
+                hourly.weather_code[i]
             );
 
 
@@ -1228,7 +978,9 @@ function displayHourlyForecast(data) {
         card.innerHTML = `
 
             <strong>
-                ${formatHour(time)}
+                ${formatApiHour(
+                    hourly.time[i]
+                )}
             </strong>
 
             <div class="icon">
@@ -1244,11 +996,7 @@ function displayHourlyForecast(data) {
             </div>
 
             <div class="rain">
-                🌧️ ${rain}% rain
-            </div>
-
-            <div class="rain">
-                💨 ${wind} km/h
+                🌧️ ${Math.round(rain)}% rain
             </div>
 
         `;
@@ -1257,13 +1005,15 @@ function displayHourlyForecast(data) {
         hourlyElement.appendChild(
             card
         );
+
     }
+
 }
 
 
-/* =========================================================
+/* =========================================
    7 DAY FORECAST
-========================================================= */
+========================================= */
 
 function displayDailyForecast(data) {
 
@@ -1271,7 +1021,8 @@ function displayDailyForecast(data) {
         data.daily;
 
 
-    dailyElement.innerHTML = "";
+    dailyElement.innerHTML =
+        "";
 
 
     for (
@@ -1280,30 +1031,33 @@ function displayDailyForecast(data) {
         i++
     ) {
 
-        const date =
-            new Date(
-                daily.time[i]
-            );
-
-
         const code =
-            daily.weather_code[i];
+            Number(
+                daily.weather_code[i]
+            );
 
 
         const max =
             Math.round(
-                daily.temperature_2m_max[i]
+                Number(
+                    daily.temperature_2m_max[i]
+                )
             );
 
 
         const min =
             Math.round(
-                daily.temperature_2m_min[i]
+                Number(
+                    daily.temperature_2m_min[i]
+                )
             );
 
 
         const rain =
-            daily.precipitation_probability_max[i] ?? 0;
+            Number(
+                daily
+                    .precipitation_probability_max[i]
+            ) || 0;
 
 
         const card =
@@ -1319,7 +1073,10 @@ function displayDailyForecast(data) {
         card.innerHTML = `
 
             <strong>
-                ${formatDay(date)}
+                ${formatApiDay(
+                    daily.time[i],
+                    i
+                )}
             </strong>
 
             <div class="icon">
@@ -1335,7 +1092,7 @@ function displayDailyForecast(data) {
             </div>
 
             <div class="rain">
-                🌧️ ${rain}%
+                🌧️ ${Math.round(rain)}%
             </div>
 
         `;
@@ -1344,43 +1101,227 @@ function displayDailyForecast(data) {
         dailyElement.appendChild(
             card
         );
+
     }
+
 }
 
 
-/* =========================================================
-   FORMAT HOUR
-========================================================= */
+/* =========================================
+   FORMAT API DATE/TIME
+========================================= */
 
-function formatHour(date) {
+function formatApiDateTime(
+    dateTime
+) {
 
-    return date.toLocaleTimeString(
-        "en-US",
-        {
-            hour: "numeric"
-        }
-    );
+    if (!dateTime) {
+        return "--";
+    }
+
+
+    const parts =
+        String(dateTime)
+            .split("T");
+
+
+    if (parts.length !== 2) {
+        return dateTime;
+    }
+
+
+    const date =
+        parts[0];
+
+
+    const time =
+        parts[1];
+
+
+    const dateParts =
+        date.split("-");
+
+
+    if (dateParts.length !== 3) {
+        return dateTime;
+    }
+
+
+    const year =
+        Number(dateParts[0]);
+
+
+    const month =
+        Number(dateParts[1]);
+
+
+    const day =
+        Number(dateParts[2]);
+
+
+    const timeParts =
+        time.split(":");
+
+
+    let hour =
+        Number(timeParts[0]);
+
+
+    const minute =
+        timeParts[1] || "00";
+
+
+    const ampm =
+        hour >= 12
+            ? "PM"
+            : "AM";
+
+
+    hour =
+        hour % 12 || 12;
+
+
+    const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    ];
+
+
+    const weekday =
+        new Date(
+            Date.UTC(
+                year,
+                month - 1,
+                day
+            )
+        ).toLocaleDateString(
+            "en-US",
+            {
+                weekday: "long",
+                timeZone: "UTC"
+            }
+        );
+
+
+    return `${weekday}, ${monthNames[month - 1]} ${day}, ${year} • ${hour}:${minute} ${ampm}`;
+
 }
 
 
-/* =========================================================
-   FORMAT DAY
-========================================================= */
+/* =========================================
+   FORMAT HOURLY TIME
+========================================= */
 
-function formatDay(date) {
+function formatApiHour(
+    dateTime
+) {
+
+    if (!dateTime) {
+        return "--";
+    }
+
+
+    const parts =
+        String(dateTime)
+            .split("T");
+
+
+    if (parts.length !== 2) {
+        return dateTime;
+    }
+
+
+    const time =
+        parts[1];
+
+
+    const hour =
+        Number(
+            time.split(":")[0]
+        );
+
+
+    const minute =
+        time.split(":")[1] || "00";
+
+
+    const displayHour =
+        hour % 12 || 12;
+
+
+    const ampm =
+        hour >= 12
+            ? "PM"
+            : "AM";
+
+
+    return `${displayHour}:${minute} ${ampm}`;
+
+}
+
+
+/* =========================================
+   FORMAT DAILY DAY
+========================================= */
+
+function formatApiDay(
+    dateString,
+    index
+) {
+
+    if (index === 0) {
+
+        return "Today";
+
+    }
+
+
+    const parts =
+        String(dateString)
+            .split("-");
+
+
+    if (parts.length !== 3) {
+
+        return dateString;
+
+    }
+
+
+    const date =
+        new Date(
+            Date.UTC(
+                Number(parts[0]),
+                Number(parts[1]) - 1,
+                Number(parts[2])
+            )
+        );
+
 
     return date.toLocaleDateString(
         "en-US",
         {
-            weekday: "short"
+            weekday: "short",
+            timeZone: "UTC"
         }
     );
+
 }
 
 
-/* =========================================================
+/* =========================================
    SUNRISE / SUNSET
-========================================================= */
+========================================= */
 
 function displaySunTimes(data) {
 
@@ -1396,45 +1337,423 @@ function displaySunTimes(data) {
             "--";
 
         return;
+
     }
 
 
-    const sunrise =
-        new Date(
+    sunriseElement.textContent =
+        formatApiHour(
             data.daily.sunrise[0]
         );
 
 
-    const sunset =
-        new Date(
+    sunsetElement.textContent =
+        formatApiHour(
             data.daily.sunset[0]
         );
 
-
-    sunriseElement.textContent =
-        sunrise.toLocaleTimeString(
-            "en-US",
-            {
-                hour: "numeric",
-                minute: "2-digit"
-            }
-        );
-
-
-    sunsetElement.textContent =
-        sunset.toLocaleTimeString(
-            "en-US",
-            {
-                hour: "numeric",
-                minute: "2-digit"
-            }
-        );
 }
 
 
-/* =========================================================
+/* =========================================
+   MY LOCATION
+========================================= */
+
+function getMyLocation() {
+
+    hideError();
+
+
+    /*
+     * Check whether browser supports
+     * the Geolocation API.
+     */
+
+    if (
+        !("geolocation" in navigator)
+    ) {
+
+        showError(
+            "Your browser does not support location detection."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * Geolocation requires HTTPS
+     * except for special local
+     * development environments.
+     */
+
+    if (
+        window.location.protocol !== "https:" &&
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+    ) {
+
+        showError(
+            "Location services require HTTPS. Please open the HTTPS version of this website."
+        );
+
+        return;
+
+    }
+
+
+    showLoading();
+
+
+    showLocationStatus(
+        "📍 Requesting your location. Please press Allow if your browser asks for permission."
+    );
+
+
+    /*
+     * Disable button while requesting
+     * the location.
+     */
+
+    locationButton.disabled =
+        true;
+
+
+    const options = {
+
+        enableHighAccuracy:
+            false,
+
+        timeout:
+            15000,
+
+        maximumAge:
+            300000
+
+    };
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        async function (position) {
+
+            try {
+
+                const latitude =
+                    Number(
+                        position.coords.latitude
+                    );
+
+
+                const longitude =
+                    Number(
+                        position.coords.longitude
+                    );
+
+
+                const accuracy =
+                    Number(
+                        position.coords.accuracy
+                    );
+
+
+                console.log(
+                    "Location received:",
+                    {
+                        latitude,
+                        longitude,
+                        accuracy
+                    }
+                );
+
+
+                /*
+                 * Validate the returned
+                 * coordinates.
+                 */
+
+                if (
+                    !Number.isFinite(latitude) ||
+                    !Number.isFinite(longitude)
+                ) {
+
+                    throw new Error(
+                        "Browser returned invalid coordinates."
+                    );
+
+                }
+
+
+                if (
+                    latitude < -90 ||
+                    latitude > 90 ||
+                    longitude < -180 ||
+                    longitude > 180
+                ) {
+
+                    throw new Error(
+                        "Browser returned coordinates outside the valid range."
+                    );
+
+                }
+
+
+                showLocationStatus(
+                    `📍 Location found. Loading weather...`
+                );
+
+
+                /*
+                 * Load weather directly using
+                 * latitude and longitude.
+                 */
+
+                await getWeather(
+
+                    latitude,
+
+                    longitude,
+
+                    "Your Location",
+
+                    ""
+
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Location weather error:",
+                    error
+                );
+
+
+                showError(
+                    "Your location was detected, but the weather data could not be loaded. Please check your internet connection and try again."
+                );
+
+            } finally {
+
+                locationButton.disabled =
+                    false;
+
+                hideLoading();
+
+            }
+
+        },
+
+
+        function (error) {
+
+            console.error(
+                "Geolocation error:",
+                error
+            );
+
+
+            locationButton.disabled =
+                false;
+
+
+            hideLoading();
+
+
+            handleLocationError(
+                error
+            );
+
+        },
+
+
+        options
+
+    );
+
+}
+
+
+/* =========================================
+   LOCATION ERROR HANDLING
+========================================= */
+
+function handleLocationError(
+    error
+) {
+
+    /*
+     * 1 = PERMISSION_DENIED
+     * 2 = POSITION_UNAVAILABLE
+     * 3 = TIMEOUT
+     */
+
+    if (
+        error &&
+        error.code === 1
+    ) {
+
+        showLocationStatus(
+            "📍 Location permission was denied."
+        );
+
+
+        showError(
+            "Location access was denied. Click the location/lock icon beside the website address in your browser and allow Location, then reload the page."
+        );
+
+
+        return;
+
+    }
+
+
+    if (
+        error &&
+        error.code === 2
+    ) {
+
+        showLocationStatus(
+            "📍 Your device could not determine your location."
+        );
+
+
+        showError(
+            "Your location could not be determined. Make sure Location Services are enabled on your device and try again."
+        );
+
+
+        return;
+
+    }
+
+
+    if (
+        error &&
+        error.code === 3
+    ) {
+
+        showLocationStatus(
+            "📍 Location request timed out."
+        );
+
+
+        showError(
+            "The location request took too long. Make sure Location Services are enabled and try again."
+        );
+
+
+        return;
+
+    }
+
+
+    showLocationStatus(
+        "📍 Unable to determine your location."
+    );
+
+
+    showError(
+        "Unable to access your location. Please check your browser's location permission and try again."
+    );
+
+}
+
+
+/* =========================================
+   CHECK LOCATION PERMISSION
+========================================= */
+
+async function checkLocationPermission() {
+
+    /*
+     * Permissions API is not available
+     * in every browser, so this is optional.
+     */
+
+    if (
+        !navigator.permissions ||
+        !navigator.permissions.query
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const permission =
+            await navigator.permissions.query(
+                {
+                    name: "geolocation"
+                }
+            );
+
+
+        console.log(
+            "Geolocation permission:",
+            permission.state
+        );
+
+
+        permission.addEventListener(
+            "change",
+            function () {
+
+                console.log(
+                    "Geolocation permission changed:",
+                    permission.state
+                );
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.log(
+            "Could not check geolocation permission:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   LOCATION STATUS
+========================================= */
+
+function showLocationStatus(
+    message
+) {
+
+    locationStatusElement.textContent =
+        message;
+
+
+    locationStatusElement.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+function hideLocationStatus() {
+
+    locationStatusElement.classList.add(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================
    ALERT PLACEHOLDER
-========================================================= */
+========================================= */
 
 function displayNoAlerts() {
 
@@ -1442,42 +1761,34 @@ function displayNoAlerts() {
 
         <div class="no-alert">
 
-            🔵 No official emergency alert service
-            is connected to this website yet.
+            🔵 No connected authoritative
+            emergency alert feed yet.
 
             <br><br>
 
-            Weather forecasts shown here are
-            provided for general information.
-
-            <br><br>
-
-            For emergency situations, always
-            follow warnings and instructions from
-            your local official authorities.
+            Weather forecast information is
+            provided separately from official
+            emergency warnings.
 
         </div>
 
     `;
+
 }
 
 
-/* =========================================================
+/* =========================================
    LOADING
-========================================================= */
+========================================= */
 
-function showLoading(message) {
-
-    loadingElement.textContent =
-        message || "Loading weather...";
-
+function showLoading() {
 
     loadingElement.classList.remove(
         "hidden"
     );
 
-
     hideError();
+
 }
 
 
@@ -1486,14 +1797,17 @@ function hideLoading() {
     loadingElement.classList.add(
         "hidden"
     );
+
 }
 
 
-/* =========================================================
+/* =========================================
    ERROR
-========================================================= */
+========================================= */
 
-function showError(message) {
+function showError(
+    message
+) {
 
     errorElement.textContent =
         message;
@@ -1502,6 +1816,7 @@ function showError(message) {
     errorElement.classList.remove(
         "hidden"
     );
+
 }
 
 
@@ -1510,22 +1825,23 @@ function hideError() {
     errorElement.classList.add(
         "hidden"
     );
+
 }
 
 
-/* =========================================================
-   DISABLE BUTTONS
-========================================================= */
+/* =========================================
+   STARTUP
+========================================= */
 
-function setButtonsDisabled(disabled) {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    searchButton.disabled =
-        disabled;
+        checkLocationPermission();
 
-    locationButton.disabled =
-        disabled;
+        console.log(
+            "Weather Summary loaded successfully."
+        );
 
-    cityInput.disabled =
-        disabled;
-}
-```
+    }
+);
