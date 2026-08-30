@@ -1,13 +1,6 @@
-/* =========================================================
-   WEATHER SUMMARY
-   Main JavaScript
-   Weather data: Open-Meteo
-========================================================= */
-
-
-/* =========================================================
+/* =========================================
    GET HTML ELEMENTS
-========================================================= */
+========================================= */
 
 const cityInput =
     document.getElementById("cityInput");
@@ -72,25 +65,13 @@ const loadingElement =
 const errorElement =
     document.getElementById("error");
 
-const copyrightYear =
-    document.getElementById("copyrightYear");
+const locationMessageElement =
+    document.getElementById("locationMessage");
 
 
-/* =========================================================
-   COPYRIGHT YEAR
-========================================================= */
-
-if (copyrightYear) {
-
-    copyrightYear.textContent =
-        new Date().getFullYear();
-
-}
-
-
-/* =========================================================
+/* =========================================
    BUTTON EVENTS
-========================================================= */
+========================================= */
 
 searchButton.addEventListener(
     "click",
@@ -118,9 +99,9 @@ locationButton.addEventListener(
 );
 
 
-/* =========================================================
+/* =========================================
    SEARCH CITY
-========================================================= */
+========================================= */
 
 async function searchWeather() {
 
@@ -142,6 +123,8 @@ async function searchWeather() {
     try {
 
         showLoading();
+
+        hideLocationMessage();
 
 
         const url =
@@ -196,7 +179,7 @@ async function searchWeather() {
 
             location.name,
 
-            location.country
+            location.country || ""
 
         );
 
@@ -209,7 +192,7 @@ async function searchWeather() {
         );
 
         showError(
-            "Unable to find this city. Please try again."
+            "Unable to find this city. Please check your internet connection and try again."
         );
 
     } finally {
@@ -221,9 +204,300 @@ async function searchWeather() {
 }
 
 
-/* =========================================================
+/* =========================================
+   MY LOCATION
+========================================= */
+
+function getMyLocation() {
+
+    hideError();
+
+    hideLocationMessage();
+
+
+    /*
+        Check whether browser supports
+        Geolocation.
+    */
+
+    if (!("geolocation" in navigator)) {
+
+        showError(
+            "Location services are not supported by your browser."
+        );
+
+        return;
+
+    }
+
+
+    /*
+        Geolocation requires HTTPS
+        except for localhost.
+    */
+
+    const isSecure =
+        window.isSecureContext ||
+        location.hostname === "localhost" ||
+        location.hostname === "127.0.0.1";
+
+
+    if (!isSecure) {
+
+        showError(
+            "Location access requires a secure HTTPS connection."
+        );
+
+        return;
+
+    }
+
+
+    /*
+        Disable button while obtaining
+        the user's location.
+    */
+
+    locationButton.disabled = true;
+
+    locationButton.textContent =
+        "📍 Finding location...";
+
+
+    showLoading();
+
+
+    showLocationMessage(
+        "📍 Requesting your location. Please allow location access if your browser asks."
+    );
+
+
+    /*
+        IMPORTANT:
+        We use a separate success/error
+        callback instead of putting everything
+        into one large function.
+    */
+
+    navigator.geolocation.getCurrentPosition(
+
+        handleLocationSuccess,
+
+        handleLocationError,
+
+        {
+            enableHighAccuracy: false,
+
+            timeout: 15000,
+
+            maximumAge: 300000
+        }
+
+    );
+
+}
+
+
+/* =========================================
+   LOCATION SUCCESS
+========================================= */
+
+async function handleLocationSuccess(position) {
+
+    try {
+
+        /*
+            Get coordinates from browser.
+        */
+
+        const latitude =
+            position.coords.latitude;
+
+        const longitude =
+            position.coords.longitude;
+
+
+        console.log(
+            "Location found:",
+            latitude,
+            longitude
+        );
+
+
+        /*
+            Basic coordinate validation.
+        */
+
+        if (
+            typeof latitude !== "number" ||
+            typeof longitude !== "number" ||
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude)
+        ) {
+
+            throw new Error(
+                "Invalid coordinates received."
+            );
+
+        }
+
+
+        if (
+            latitude < -90 ||
+            latitude > 90 ||
+            longitude < -180 ||
+            longitude > 180
+        ) {
+
+            throw new Error(
+                "Coordinates are outside valid range."
+            );
+
+        }
+
+
+        showLocationMessage(
+            "📍 Your location was found. Loading local weather..."
+        );
+
+
+        /*
+            Get weather using the exact
+            coordinates supplied by browser.
+        */
+
+        await getWeather(
+
+            latitude,
+
+            longitude,
+
+            "Your Location",
+
+            ""
+
+        );
+
+
+        /*
+            Clear search input because this
+            result comes from GPS/location.
+        */
+
+        cityInput.value = "";
+
+
+        showLocationMessage(
+            "📍 Weather shown for your current location."
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Location weather error:",
+            error
+        );
+
+        showError(
+            "Your location was detected, but weather information could not be loaded. Please try again."
+        );
+
+    } finally {
+
+        finishLocationButton();
+
+        hideLoading();
+
+    }
+
+}
+
+
+/* =========================================
+   LOCATION ERROR
+========================================= */
+
+function handleLocationError(error) {
+
+    console.error(
+        "Geolocation error:",
+        error
+    );
+
+
+    let message =
+        "Unable to get your location.";
+
+
+    /*
+        Permission denied
+    */
+
+    if (error.code === 1) {
+
+        message =
+            "Location permission was denied. Please allow location access for this website in your browser settings, then try again.";
+
+    }
+
+
+    /*
+        Position unavailable
+    */
+
+    else if (error.code === 2) {
+
+        message =
+            "Your location could not be determined. Please check that location services are enabled on your device.";
+
+    }
+
+
+    /*
+        Timeout
+    */
+
+    else if (error.code === 3) {
+
+        message =
+            "Location detection timed out. Please try again or search for your city manually.";
+
+    }
+
+
+    showError(message);
+
+
+    showLocationMessage(
+        "📍 Location could not be detected. You can search for your city instead."
+    );
+
+
+    finishLocationButton();
+
+    hideLoading();
+
+}
+
+
+/* =========================================
+   RESET LOCATION BUTTON
+========================================= */
+
+function finishLocationButton() {
+
+    locationButton.disabled = false;
+
+    locationButton.textContent =
+        "📍 My Location";
+
+}
+
+
+/* =========================================
    GET WEATHER
-========================================================= */
+========================================= */
 
 async function getWeather(
     latitude,
@@ -247,7 +521,6 @@ async function getWeather(
             encodeURIComponent(longitude) +
 
             "&current=" +
-
             "temperature_2m," +
             "relative_humidity_2m," +
             "apparent_temperature," +
@@ -256,14 +529,12 @@ async function getWeather(
             "weather_code" +
 
             "&hourly=" +
-
             "temperature_2m," +
             "precipitation_probability," +
             "weather_code," +
             "wind_speed_10m" +
 
             "&daily=" +
-
             "weather_code," +
             "temperature_2m_max," +
             "temperature_2m_min," +
@@ -276,6 +547,12 @@ async function getWeather(
             "&forecast_days=7";
 
 
+        console.log(
+            "Weather request:",
+            url
+        );
+
+
         const response =
             await fetch(url);
 
@@ -283,7 +560,8 @@ async function getWeather(
         if (!response.ok) {
 
             throw new Error(
-                "Weather API request failed."
+                "Weather API request failed: " +
+                response.status
             );
 
         }
@@ -293,16 +571,22 @@ async function getWeather(
             await response.json();
 
 
-        if (!data.current) {
+        if (
+            !data.current ||
+            !data.hourly ||
+            !data.daily
+        ) {
 
             throw new Error(
-                "Weather data is unavailable."
+                "Invalid weather data received."
             );
 
         }
 
 
-        /* CURRENT WEATHER */
+        /*
+            Display all weather sections.
+        */
 
         displayCurrentWeather(
             data,
@@ -311,44 +595,25 @@ async function getWeather(
         );
 
 
-        /* HOURLY FORECAST */
-
         displayHourlyForecast(
             data
         );
 
-
-        /* 7 DAY FORECAST */
 
         displayDailyForecast(
             data
         );
 
 
-        /* SUMMARY */
-
         displaySummary(
             data
         );
 
 
-        /* SUNRISE / SUNSET */
-
         displaySunTimes(
             data
         );
 
-
-        /*
-            IMPORTANT:
-
-            Open-Meteo forecast data itself is NOT
-            an official emergency alert system.
-
-            Therefore we clearly label this section
-            as information rather than claiming
-            official emergency warnings.
-        */
 
         displayNoAlerts();
 
@@ -361,7 +626,7 @@ async function getWeather(
         );
 
         showError(
-            "Unable to load weather information. Please try again."
+            "Unable to load weather information. Please check your internet connection and try again."
         );
 
     } finally {
@@ -373,9 +638,9 @@ async function getWeather(
 }
 
 
-/* =========================================================
+/* =========================================
    DISPLAY CURRENT WEATHER
-========================================================= */
+========================================= */
 
 function displayCurrentWeather(
     data,
@@ -387,36 +652,22 @@ function displayCurrentWeather(
         data.current;
 
 
-    /* LOCATION */
-
     cityElement.textContent =
         country
             ? `${name}, ${country}`
             : name;
 
 
-    /* DATE */
+    /*
+        Open-Meteo returns the local time
+        for the selected timezone.
+    */
 
-    const localDate =
-        parseLocalDateTime(
+    dateElement.textContent =
+        formatWeatherDate(
             current.time
         );
 
-
-    dateElement.textContent =
-        localDate.toLocaleString(
-            "en-US",
-            {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit"
-            }
-        );
-
-
-    /* TEMPERATURE */
 
     temperatureElement.textContent =
         `${Math.round(
@@ -424,21 +675,15 @@ function displayCurrentWeather(
         )}°C`;
 
 
-    /* FEELS LIKE */
-
     feelsLikeElement.textContent =
         `${Math.round(
             current.apparent_temperature
         )}°C`;
 
 
-    /* HUMIDITY */
-
     humidityElement.textContent =
         `${current.relative_humidity_2m}%`;
 
-
-    /* WIND */
 
     windElement.textContent =
         `${Math.round(
@@ -446,15 +691,11 @@ function displayCurrentWeather(
         )} km/h`;
 
 
-    /* PRESSURE */
-
     pressureElement.textContent =
         `${Math.round(
             current.pressure_msl
         )} hPa`;
 
-
-    /* RAIN CHANCE */
 
     const currentHour =
         findCurrentHourIndex(
@@ -466,17 +707,13 @@ function displayCurrentWeather(
     let rainChance = 0;
 
 
-    if (
-        currentHour >= 0 &&
-        data.hourly.precipitation_probability &&
-        data.hourly.precipitation_probability[currentHour] !== undefined
-    ) {
+    if (currentHour >= 0) {
 
         rainChance =
             data.hourly
                 .precipitation_probability[
                     currentHour
-                ];
+                ] ?? 0;
 
     }
 
@@ -484,8 +721,6 @@ function displayCurrentWeather(
     rainChanceElement.textContent =
         `${rainChance}%`;
 
-
-    /* WEATHER CONDITION */
 
     const code =
         current.weather_code;
@@ -497,8 +732,6 @@ function displayCurrentWeather(
         );
 
 
-    /* WEATHER ICON */
-
     weatherIconElement.textContent =
         getWeatherIcon(
             code
@@ -507,51 +740,76 @@ function displayCurrentWeather(
 }
 
 
-/* =========================================================
-   PARSE LOCAL DATE/TIME
-========================================================= */
+/* =========================================
+   FORMAT WEATHER DATE
+========================================= */
 
-function parseLocalDateTime(
-    dateTimeString
-) {
+function formatWeatherDate(timeString) {
 
-    /*
-        Open-Meteo with timezone=auto returns
-        local time without a timezone offset.
+    if (!timeString) {
 
-        We create the date carefully so the
-        displayed date/time remains usable.
-    */
-
-    const parts =
-        dateTimeString.split(
-            /[-T: ]/
-        ).map(Number);
-
-
-    if (parts.length >= 5) {
-
-        return new Date(
-            parts[0],
-            parts[1] - 1,
-            parts[2],
-            parts[3],
-            parts[4]
-        );
+        return "--";
 
     }
 
 
-    return new Date(
-        dateTimeString
+    /*
+        Open-Meteo's timezone=auto gives
+        local time without timezone offset.
+
+        We format the returned string
+        directly instead of accidentally
+        converting it to the user's timezone.
+    */
+
+    const parts =
+        timeString.split("T");
+
+
+    if (parts.length !== 2) {
+
+        return timeString;
+
+    }
+
+
+    const datePart =
+        parts[0];
+
+    const timePart =
+        parts[1];
+
+
+    const date =
+        new Date(
+            `${datePart}T${timePart}:00`
+        );
+
+
+    if (Number.isNaN(date.getTime())) {
+
+        return timeString;
+
+    }
+
+
+    return date.toLocaleString(
+        "en-US",
+        {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+        }
     );
 
 }
 
 
-/* =========================================================
+/* =========================================
    FIND CURRENT HOUR
-========================================================= */
+========================================= */
 
 function findCurrentHourIndex(
     hourly,
@@ -569,20 +827,39 @@ function findCurrentHourIndex(
     }
 
 
+    if (currentTime) {
+
+        const exactIndex =
+            hourly.time.indexOf(
+                currentTime
+            );
+
+
+        if (exactIndex !== -1) {
+
+            return exactIndex;
+
+        }
+
+    }
+
+
     /*
-        Find the exact or nearest forecast hour.
+        Find the closest hourly time.
     */
+
+    const currentDate =
+        currentTime
+            ? new Date(
+                `${currentTime}:00`
+              )
+            : new Date();
+
 
     let bestIndex = 0;
 
     let smallestDifference =
         Infinity;
-
-
-    const currentDate =
-        parseLocalDateTime(
-            currentTime
-        );
 
 
     for (
@@ -592,8 +869,8 @@ function findCurrentHourIndex(
     ) {
 
         const hourDate =
-            parseLocalDateTime(
-                hourly.time[i]
+            new Date(
+                `${hourly.time[i]}:00`
             );
 
 
@@ -625,217 +902,124 @@ function findCurrentHourIndex(
 }
 
 
-/* =========================================================
+/* =========================================
    WEATHER DESCRIPTION
-========================================================= */
+========================================= */
 
 function getWeatherDescription(code) {
 
     if (code === 0) {
-
         return "Clear sky";
-
     }
-
 
     if (code === 1) {
-
         return "Mainly clear";
-
     }
-
 
     if (code === 2) {
-
         return "Partly cloudy";
-
     }
-
 
     if (code === 3) {
-
         return "Overcast";
-
     }
 
-
-    if (
-        [45, 48].includes(code)
-    ) {
-
+    if ([45, 48].includes(code)) {
         return "Foggy";
-
     }
 
-
-    if (
-        [51, 53, 55].includes(code)
-    ) {
-
+    if ([51, 53, 55].includes(code)) {
         return "Drizzle";
-
     }
 
-
-    if (
-        [56, 57].includes(code)
-    ) {
-
+    if ([56, 57].includes(code)) {
         return "Freezing drizzle";
-
     }
 
-
-    if (
-        [61, 63, 65].includes(code)
-    ) {
-
+    if ([61, 63, 65].includes(code)) {
         return "Rain";
-
     }
 
-
-    if (
-        [66, 67].includes(code)
-    ) {
-
+    if ([66, 67].includes(code)) {
         return "Freezing rain";
-
     }
 
-
-    if (
-        [71, 73, 75, 77].includes(code)
-    ) {
-
+    if ([71, 73, 75, 77].includes(code)) {
         return "Snow";
-
     }
 
-
-    if (
-        [80, 81, 82].includes(code)
-    ) {
-
+    if ([80, 81, 82].includes(code)) {
         return "Rain showers";
-
     }
 
-
-    if (
-        [85, 86].includes(code)
-    ) {
-
+    if ([85, 86].includes(code)) {
         return "Snow showers";
-
     }
 
-
-    if (
-        [95, 96, 99].includes(code)
-    ) {
-
+    if ([95, 96, 99].includes(code)) {
         return "Thunderstorm";
-
     }
-
 
     return "Unknown weather";
 
 }
 
 
-/* =========================================================
+/* =========================================
    WEATHER ICON
-========================================================= */
+========================================= */
 
 function getWeatherIcon(code) {
 
     if (code === 0) {
-
         return "☀️";
-
     }
 
-
-    if (
-        [1, 2].includes(code)
-    ) {
-
+    if ([1, 2].includes(code)) {
         return "⛅";
-
     }
-
 
     if (code === 3) {
-
         return "☁️";
-
     }
 
-
-    if (
-        [45, 48].includes(code)
-    ) {
-
+    if ([45, 48].includes(code)) {
         return "🌫️";
-
     }
 
-
-    if (
-        [51, 53, 55, 56, 57].includes(code)
-    ) {
-
+    if ([51, 53, 55, 56, 57].includes(code)) {
         return "🌦️";
-
     }
 
-
-    if (
-        [61, 63, 65, 66, 67].includes(code)
-    ) {
-
+    if ([61, 63, 65, 66, 67].includes(code)) {
         return "🌧️";
-
     }
 
-
     if (
-        [71, 73, 75, 77, 85, 86].includes(code)
+        [71, 73, 75, 77, 85, 86]
+            .includes(code)
     ) {
 
         return "❄️";
 
     }
 
-
-    if (
-        [80, 81, 82].includes(code)
-    ) {
-
+    if ([80, 81, 82].includes(code)) {
         return "🌦️";
-
     }
 
-
-    if (
-        [95, 96, 99].includes(code)
-    ) {
-
+    if ([95, 96, 99].includes(code)) {
         return "⛈️";
-
     }
-
 
     return "🌤️";
 
 }
 
 
-/* =========================================================
+/* =========================================
    WEATHER SUMMARY
-========================================================= */
+========================================= */
 
 function displaySummary(data) {
 
@@ -873,43 +1057,39 @@ function displaySummary(data) {
     let rainChance = 0;
 
 
-    if (
-        currentHour >= 0 &&
-        data.hourly.precipitation_probability &&
-        data.hourly.precipitation_probability[currentHour] !== undefined
-    ) {
+    if (currentHour >= 0) {
 
         rainChance =
             data.hourly
                 .precipitation_probability[
                     currentHour
-                ];
+                ] ?? 0;
 
     }
 
 
     let summary =
-        `Current conditions are ${getWeatherDescription(code).toLowerCase()} with a temperature of approximately ${temperature}°C. `;
+        `Today is ${getWeatherDescription(code).toLowerCase()} with a temperature of around ${temperature}°C. `;
 
 
     if (rainChance >= 70) {
 
         summary +=
-            "The probability of precipitation is high. ";
+            "There is a high chance of rain, so carrying an umbrella is recommended. ";
 
     }
 
     else if (rainChance >= 40) {
 
         summary +=
-            "There is a moderate probability of precipitation. ";
+            "There is a moderate chance of rain today. ";
 
     }
 
     else {
 
         summary +=
-            "The probability of precipitation is currently low. ";
+            "There is currently a low chance of rain. ";
 
     }
 
@@ -917,14 +1097,14 @@ function displaySummary(data) {
     if (wind >= 40) {
 
         summary +=
-            "Wind speeds are currently strong. ";
+            "Strong winds are possible. ";
 
     }
 
     else if (wind >= 25) {
 
         summary +=
-            "Moderate to noticeable winds are present. ";
+            "Winds may be noticeable. ";
 
     }
 
@@ -957,9 +1137,9 @@ function displaySummary(data) {
 }
 
 
-/* =========================================================
+/* =========================================
    HOURLY FORECAST
-========================================================= */
+========================================= */
 
 function displayHourlyForecast(data) {
 
@@ -967,8 +1147,7 @@ function displayHourlyForecast(data) {
         data.hourly;
 
 
-    hourlyElement.innerHTML =
-        "";
+    hourlyElement.innerHTML = "";
 
 
     const startIndex =
@@ -978,23 +1157,18 @@ function displayHourlyForecast(data) {
         );
 
 
-    const hoursToShow =
-        24;
+    const safeStartIndex =
+        startIndex >= 0
+            ? startIndex
+            : 0;
 
 
-    if (startIndex < 0) {
-
-        hourlyElement.innerHTML =
-            "<p>Hourly forecast unavailable.</p>";
-
-        return;
-
-    }
+    const hoursToShow = 24;
 
 
     for (
-        let i = startIndex;
-        i < startIndex + hoursToShow;
+        let i = safeStartIndex;
+        i < safeStartIndex + hoursToShow;
         i++
     ) {
 
@@ -1008,8 +1182,8 @@ function displayHourlyForecast(data) {
 
 
         const time =
-            parseLocalDateTime(
-                hourly.time[i]
+            new Date(
+                `${hourly.time[i]}:00`
             );
 
 
@@ -1021,17 +1195,11 @@ function displayHourlyForecast(data) {
 
         const rain =
             hourly
-                .precipitation_probability[i];
+                .precipitation_probability[i] ?? 0;
 
 
         const code =
             hourly.weather_code[i];
-
-
-        const wind =
-            Math.round(
-                hourly.wind_speed_10m[i]
-            );
 
 
         const card =
@@ -1063,11 +1231,7 @@ function displayHourlyForecast(data) {
             </div>
 
             <div class="rain">
-                🌧️ ${rain ?? 0}% rain
-            </div>
-
-            <div class="rain">
-                💨 ${wind} km/h
+                🌧️ ${rain}% rain
             </div>
 
         `;
@@ -1082,9 +1246,9 @@ function displayHourlyForecast(data) {
 }
 
 
-/* =========================================================
+/* =========================================
    7 DAY FORECAST
-========================================================= */
+========================================= */
 
 function displayDailyForecast(data) {
 
@@ -1092,21 +1256,7 @@ function displayDailyForecast(data) {
         data.daily;
 
 
-    dailyElement.innerHTML =
-        "";
-
-
-    if (
-        !daily ||
-        !daily.time
-    ) {
-
-        dailyElement.innerHTML =
-            "<p>Daily forecast unavailable.</p>";
-
-        return;
-
-    }
+    dailyElement.innerHTML = "";
 
 
     for (
@@ -1116,9 +1266,8 @@ function displayDailyForecast(data) {
     ) {
 
         const date =
-            parseLocalDateTime(
-                daily.time[i] +
-                "T12:00"
+            new Date(
+                `${daily.time[i]}T12:00:00`
             );
 
 
@@ -1140,7 +1289,7 @@ function displayDailyForecast(data) {
 
         const rain =
             daily
-                .precipitation_probability_max[i];
+                .precipitation_probability_max[i] ?? 0;
 
 
         const card =
@@ -1172,7 +1321,7 @@ function displayDailyForecast(data) {
             </div>
 
             <div class="rain">
-                🌧️ ${rain ?? 0}%
+                🌧️ ${rain}%
             </div>
 
         `;
@@ -1187,9 +1336,9 @@ function displayDailyForecast(data) {
 }
 
 
-/* =========================================================
+/* =========================================
    FORMAT HOUR
-========================================================= */
+========================================= */
 
 function formatHour(date) {
 
@@ -1203,9 +1352,9 @@ function formatHour(date) {
 }
 
 
-/* =========================================================
+/* =========================================
    FORMAT DAY
-========================================================= */
+========================================= */
 
 function formatDay(date) {
 
@@ -1219,9 +1368,9 @@ function formatDay(date) {
 }
 
 
-/* =========================================================
+/* =========================================
    SUNRISE / SUNSET
-========================================================= */
+========================================= */
 
 function displaySunTimes(data) {
 
@@ -1243,233 +1392,63 @@ function displaySunTimes(data) {
 
 
     const sunrise =
-        parseLocalDateTime(
-            data.daily.sunrise[0]
+        new Date(
+            `${data.daily.sunrise[0]}:00`
         );
 
 
     const sunset =
-        parseLocalDateTime(
-            data.daily.sunset[0]
+        new Date(
+            `${data.daily.sunset[0]}:00`
         );
 
 
     sunriseElement.textContent =
-        sunrise.toLocaleTimeString(
-            "en-US",
-            {
-                hour: "numeric",
-                minute: "2-digit"
-            }
+        formatTime(
+            sunrise
         );
 
 
     sunsetElement.textContent =
-        sunset.toLocaleTimeString(
-            "en-US",
-            {
-                hour: "numeric",
-                minute: "2-digit"
-            }
+        formatTime(
+            sunset
         );
 
 }
 
 
-/* =========================================================
-   MY LOCATION
-========================================================= */
+/* =========================================
+   FORMAT TIME
+========================================= */
 
-function getMyLocation() {
+function formatTime(date) {
 
-    if (!navigator.geolocation) {
+    if (
+        !date ||
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
 
-        showError(
-            "Your browser does not support location detection."
-        );
-
-        return;
+        return "--";
 
     }
 
 
-    showLoading();
-
-
-    navigator.geolocation.getCurrentPosition(
-
-        async function(position) {
-
-            const latitude =
-                position.coords.latitude;
-
-
-            const longitude =
-                position.coords.longitude;
-
-
-            try {
-
-                /*
-                    Use reverse geocoding to get
-                    a readable location name.
-                */
-
-                const reverseUrl =
-                    "https://geocoding-api.open-meteo.com/v1/reverse?" +
-                    "latitude=" +
-                    encodeURIComponent(latitude) +
-                    "&longitude=" +
-                    encodeURIComponent(longitude) +
-                    "&count=1" +
-                    "&language=en" +
-                    "&format=json";
-
-
-                const response =
-                    await fetch(
-                        reverseUrl
-                    );
-
-
-                let name =
-                    "Your Location";
-
-
-                let country =
-                    "";
-
-
-                if (response.ok) {
-
-                    const data =
-                        await response.json();
-
-
-                    if (
-                        data.results &&
-                        data.results.length > 0
-                    ) {
-
-                        name =
-                            data.results[0].name ||
-                            "Your Location";
-
-
-                        country =
-                            data.results[0].country ||
-                            "";
-
-                    }
-
-                }
-
-
-                await getWeather(
-
-                    latitude,
-
-                    longitude,
-
-                    name,
-
-                    country
-
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "Location weather error:",
-                    error
-                );
-
-
-                showError(
-                    "Unable to load weather for your location."
-                );
-
-
-            } finally {
-
-                hideLoading();
-
-            }
-
-        },
-
-
-        function(error) {
-
-            console.error(
-                "Geolocation error:",
-                error
-            );
-
-
-            let message =
-                "Unable to access your location.";
-
-
-            if (
-                error.code ===
-                error.PERMISSION_DENIED
-            ) {
-
-                message =
-                    "Location permission was denied. Please allow location access in your browser.";
-
-            }
-
-            else if (
-                error.code ===
-                error.POSITION_UNAVAILABLE
-            ) {
-
-                message =
-                    "Your location could not be determined.";
-
-            }
-
-            else if (
-                error.code ===
-                error.TIMEOUT
-            ) {
-
-                message =
-                    "Location request timed out. Please try again.";
-
-            }
-
-
-            showError(
-                message
-            );
-
-
-            hideLoading();
-
-        },
-
+    return date.toLocaleTimeString(
+        "en-US",
         {
-
-            enableHighAccuracy: false,
-
-            timeout: 10000,
-
-            maximumAge: 300000
-
+            hour: "numeric",
+            minute: "2-digit"
         }
-
     );
 
 }
 
 
-/* =========================================================
-   ALERT INFORMATION
-========================================================= */
+/* =========================================
+   ALERT PLACEHOLDER
+========================================= */
 
 function displayNoAlerts() {
 
@@ -1477,21 +1456,14 @@ function displayNoAlerts() {
 
         <div class="no-alert">
 
-            🔵 Official emergency alerts are not
-            provided by this forecast data source.
+            🔵 Emergency alert service
+            is not connected yet.
 
             <br><br>
 
-            Weather Summary provides forecast information,
-            but it should not be used as the sole source
-            for emergency or life-safety decisions.
-
-            <br><br>
-
-            For official warnings, users should check
-            the responsible national meteorological,
-            disaster-management or emergency authority
-            for their location.
+            Official emergency weather warnings
+            should be obtained from authoritative
+            government or meteorological services.
 
         </div>
 
@@ -1500,16 +1472,15 @@ function displayNoAlerts() {
 }
 
 
-/* =========================================================
+/* =========================================
    LOADING
-========================================================= */
+========================================= */
 
 function showLoading() {
 
     loadingElement.classList.remove(
         "hidden"
     );
-
 
     hideError();
 
@@ -1525,15 +1496,14 @@ function hideLoading() {
 }
 
 
-/* =========================================================
+/* =========================================
    ERROR
-========================================================= */
+========================================= */
 
 function showError(message) {
 
     errorElement.textContent =
         message;
-
 
     errorElement.classList.remove(
         "hidden"
@@ -1545,6 +1515,31 @@ function showError(message) {
 function hideError() {
 
     errorElement.classList.add(
+        "hidden"
+    );
+
+}
+
+
+/* =========================================
+   LOCATION MESSAGE
+========================================= */
+
+function showLocationMessage(message) {
+
+    locationMessageElement.textContent =
+        message;
+
+    locationMessageElement.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+function hideLocationMessage() {
+
+    locationMessageElement.classList.add(
         "hidden"
     );
 
