@@ -1,443 +1,261 @@
 <!DOCTYPE html>
-
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
-<title>About Weather Summary</title>
-<meta name="description" content="Learn about Weather Summary, a simple website providing current weather, hourly forecasts and 7-day weather forecasts.">
-<meta name="robots" content="index, follow">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+    <meta name="description"
+          content="Learn more about Weather Summary, a simple website providing current weather and forecast information.">
 
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        background: #f4f8fb;
-        color: #263238;
-        line-height: 1.7;
-    }
+    <meta name="robots"
+          content="index, follow">
 
-    header {
-        background: linear-gradient(135deg, #2196f3, #03a9f4);
-        color: white;
-        padding: 35px 20px;
-        text-align: center;
-    }
+    <link rel="canonical"
+          href="https://atdsdeveloper.github.io/wheathersummary/about.html">
 
-    header h1 {
-        font-size: 34px;
-        margin-bottom: 8px;
-    }
+    <title>About Weather Summary</title>
 
-    header p {
-        font-size: 17px;
-        opacity: 0.95;
-    }
-
-    nav {
-        background: white;
-        padding: 14px 10px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    nav a {
-        color: #1976d2;
-        text-decoration: none;
-        margin: 0 12px;
-        font-weight: 600;
-    }
-
-    nav a:hover {
-        text-decoration: underline;
-    }
-
-    .container {
-        max-width: 900px;
-        margin: 35px auto;
-        padding: 0 20px;
-    }
-
-    .card {
-        background: white;
-        padding: 30px;
-        margin-bottom: 25px;
-        border-radius: 12px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    }
-
-    h2 {
-        color: #1976d2;
-        margin-bottom: 15px;
-        font-size: 25px;
-    }
-
-    p {
-        margin-bottom: 15px;
-    }
-
-    ul {
-        padding-left: 25px;
-        margin-bottom: 15px;
-    }
-
-    li {
-        margin-bottom: 8px;
-    }
-
-    .highlight {
-        background: #e3f2fd;
-        border-left: 5px solid #2196f3;
-        padding: 18px;
-        border-radius: 6px;
-        margin-top: 15px;
-    }
-
-    footer {
-        background: #263238;
-        color: white;
-        text-align: center;
-        padding: 25px 15px;
-        margin-top: 40px;
-    }
-
-    footer a {
-        color: #90caf9;
-        text-decoration: none;
-        margin: 0 8px;
-    }
-
-    footer a:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 600px) {
-        header h1 {
-            font-size: 28px;
-        }
-
-        nav a {
-            display: inline-block;
-            margin: 5px 7px;
-        }
-
-        .card {
-            padding: 22px;
-        }
-    }
-</style>
-```
+    <link rel="stylesheet"
+          href="style.css">
 
 </head>
 
-<body>
-
-<header>
-    <h1>🌤️ About Weather Summary</h1>
-    <p>Simple, useful and accessible weather information</p>
-</header>
-
-<nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="weather-sources.html">Weather Sources</a>
-    <a href="privacy-policy.html">Privacy Policy</a>
-    <a href="terms.html">Terms of Use</a>
-    <a href="contact.html">Contact</a>
-</nav>
-
-<main class="container">
-
-```
-<section class="card">
-    <h2>About Weather Summary</h2>
-
-    <p>
-        Welcome to <strong>Weather Summary</strong>, a simple web-based
-        weather information service designed to help users quickly check
-        current weather conditions and forecasts for locations around the world.
-    </p>
-
-    <p>
-        Our goal is to make weather information easy to understand and
-        accessible on both desktop and mobile devices.
-    </p>
-
-    <div class="highlight">
-        <strong>Our goal:</strong>
-        To provide a simple and convenient way for users to check current
-        weather conditions, hourly forecasts and upcoming weather information.
-    </div>
-</section>
-
-<section class="card">
-    <h2>🌦️ What We Provide</h2>
-
-    <p>
-        Weather Summary provides useful weather information including:
-    </p>
-
-    <ul>
-        <li>Current weather conditions</li>
-        <li>Temperature and feels-like temperature</li>
-        <li>Humidity information</li>
-        <li>Wind speed information</li>
-        <li>Chance of rain</li>
-        <li>Atmospheric pressure</li>
-        <li>24-hour weather forecasts</li>
-        <li>7-day weather forecasts</li>
-        <li>Sunrise and sunset information</li>
-        <li>Weather summaries for searched locations</li>
-    </ul>
-</section>
-
-<section class="card">
-    <h2>📍 Location Search</h2>
-
-    <p>
-        Weather Summary allows users to search for weather information
-        by entering a city or location.
-    </p>
-
-    <p>
-        The website may also use the browser's location feature when a user
-        chooses the <strong>My Location</strong> option. Location access
-        requires permission from the user's browser and is not required
-        to use the normal city search feature.
-    </p>
-</section>
-
-<section class="card">
-    <h2>🌐 Weather Data</h2>
-
-    <p>
-        Weather information displayed on Weather Summary is obtained from
-        weather data services. The current website uses
-        <strong>Open-Meteo</strong> as a weather data provider.
-    </p>
-
-    <p>
-        Weather conditions can change rapidly, and forecasts are based on
-        available weather models and data. Therefore, weather information
-        shown on this website should be considered informational and may
-        not always perfectly represent actual conditions.
-    </p>
-
-    <p>
-        For severe weather, emergencies, or safety-critical decisions,
-        users should also check official weather authorities and emergency
-        services in their local area.
-    </p>
-</section>
-
-<section class="card">
-    <h2>🎯 Our Approach</h2>
-
-    <p>
-        Weather Summary is designed with simplicity in mind. We aim to
-        present useful weather information without making the experience
-        unnecessarily complicated.
-    </p>
-
-    <p>
-        We continuously work to improve the website's functionality,
-        performance, usability and accuracy of the information displayed.
-    </p>
-</section>
-
-<section class="card">
-    <h2>⚠️ Important Information</h2>
-
-    <p>
-        Weather Summary is an informational website. Weather forecasts
-        and other weather information may contain inaccuracies or may
-        change as new weather data becomes available.
-    </p>
-
-    <p>
-        We do not guarantee that all weather information will be available,
-        complete, accurate or continuously updated.
-    </p>
-
-    <p>
-        Users should not rely solely on this website for emergency,
-        aviation, maritime, medical, or other safety-critical decisions.
-    </p>
-</section>
-
-<section class="card">
-    <h2>📧 Contact Us</h2>
-
-    <p>
-        If you have questions, suggestions, or notice an issue with
-        Weather Summary, please visit our
-        <a href="contact.html">Contact</a> page.
-    </p>
-</section>
-```
-
-</main>
-
-<footer>
-    <p>© 2026 Weather Summary. All rights reserved.</p>
-
-```
-<p>
-    <a href="index.html">Home</a> |
-    <a href="about.html">About</a> |
-    <a href="weather-sources.html">Weather Sources</a> |
-    <a href="privacy-policy.html">Privacy Policy</a> |
-    <a href="terms.html">Terms of Use</a> |
-    <a href="contact.html">Contact</a>
-</p>
-```
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
-<meta name="description"
-      content="Learn about Weather Summary and the weather information provided by the website.">
-
-<title>About - Weather Summary</title>
-
-<link rel="stylesheet"
-      href="style.css">
-
-</head>
 
 <body>
 
 <main class="app">
 
-<header class="header">
+    <header class="header">
 
-<h1>🌤️ Weather Summary</h1>
+        <h1>🌤️ Weather Summary</h1>
 
-<p>About Weather Summary</p>
+        <p>
+            Simple and accessible weather information
+        </p>
 
-</header>
-
-
-<nav class="site-nav">
-
-<a href="index.html">Home</a>
-
-<a href="about.html">About</a>
-
-<a href="weather-sources.html">
-Weather Sources
-</a>
-
-<a href="privacy-policy.html">
-Privacy Policy
-</a>
-
-<a href="terms.html">
-Terms of Use
-</a>
-
-<a href="contact.html">
-Contact
-</a>
-
-</nav>
+    </header>
 
 
-<section class="card">
+    <nav class="site-nav"
+         aria-label="Main navigation">
 
-<h2>About Weather Summary</h2>
+        <a href="index.html">
+            Home
+        </a>
 
-<p>
-Weather Summary is a web-based weather information
-service designed to provide easy access to current
-weather conditions and forecasts.
-</p>
+        <a href="about.html"
+           aria-current="page">
+            About
+        </a>
 
-<br>
+        <a href="sources.html">
+            Weather Sources
+        </a>
 
-<p>
-The website provides current weather information,
-hourly forecasts and seven-day forecasts for locations
-around the world.
-</p>
+        <a href="privacy.html">
+            Privacy Policy
+        </a>
 
-<br>
+        <a href="terms.html">
+            Terms of Use
+        </a>
 
-<p>
-Users can search for a city or use their browser's
-location feature to request weather information for
-their current location.
-</p>
+        <a href="contact.html">
+            Contact
+        </a>
 
-<br>
-
-<p>
-Weather information may include temperature,
-humidity, wind speed, precipitation probability,
-atmospheric pressure, sunrise and sunset times,
-and weather conditions.
-</p>
-
-</section>
+    </nav>
 
 
-<section class="card">
+    <section class="card">
 
-<h2>Our Goal</h2>
+        <h2>
+            About Weather Summary
+        </h2>
 
-<p>
-Our goal is to make weather information simple,
-accessible and easy to understand.
-</p>
+        <p>
+            Weather Summary is a simple web application designed
+            to make weather information easy to view and understand.
+        </p>
 
-</section>
+        <p>
+            The website provides current weather conditions,
+            hourly forecasts and a seven-day forecast for locations
+            around the world.
+        </p>
+
+    </section>
 
 
-<footer>
+    <section class="card">
 
-<p>
-Weather data provided by Open-Meteo.
-</p>
+        <h2>
+            What We Provide
+        </h2>
 
-<div class="footer-links">
+        <ul>
 
-<a href="index.html">Home</a>
+            <li>
+                Current temperature
+            </li>
 
-<a href="privacy-policy.html">
-Privacy Policy
-</a>
+            <li>
+                Feels-like temperature
+            </li>
 
-<a href="terms.html">
-Terms of Use
-</a>
+            <li>
+                Weather conditions
+            </li>
 
-<a href="contact.html">
-Contact
-</a>
+            <li>
+                Relative humidity
+            </li>
 
-</div>
+            <li>
+                Wind speed
+            </li>
 
-</footer>
+            <li>
+                Precipitation probability
+            </li>
+
+            <li>
+                Atmospheric pressure
+            </li>
+
+            <li>
+                24-hour weather forecast
+            </li>
+
+            <li>
+                Seven-day weather forecast
+            </li>
+
+            <li>
+                Sunrise and sunset times
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <section class="card">
+
+        <h2>
+            How It Works
+        </h2>
+
+        <p>
+            When you search for a location, Weather Summary
+            first uses a geocoding service to identify the
+            location and its geographical coordinates.
+        </p>
+
+        <p>
+            The website then requests weather forecast data
+            for those coordinates and displays the results
+            in an easy-to-read format.
+        </p>
+
+    </section>
+
+
+    <section class="card">
+
+        <h2>
+            Weather Data
+        </h2>
+
+        <p>
+            Weather data is provided through Open-Meteo.
+            For more information about the services and data
+            used by this website, please visit our
+            <a href="sources.html">
+                Weather Sources
+            </a>
+            page.
+        </p>
+
+    </section>
+
+
+    <section class="card">
+
+        <h2>
+            Important Information
+        </h2>
+
+        <p>
+            Weather forecasts can change as new observations
+            and forecast model calculations become available.
+            Weather Summary should therefore not be considered
+            a replacement for official weather warnings,
+            emergency instructions or professional advice.
+        </p>
+
+        <p>
+            For severe or dangerous weather, always check
+            the official meteorological and emergency
+            authorities in your area.
+        </p>
+
+    </section>
+
+
+    <footer>
+
+        <p>
+            Weather data provided by
+            <a href="https://open-meteo.com/"
+               target="_blank"
+               rel="noopener noreferrer">
+                Open-Meteo
+            </a>.
+        </p>
+
+        <div class="footer-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="sources.html">
+                Weather Sources
+            </a>
+
+            <a href="privacy.html">
+                Privacy Policy
+            </a>
+
+            <a href="terms.html">
+                Terms of Use
+            </a>
+
+            <a href="contact.html">
+                Contact
+            </a>
+
+        </div>
+
+        <p class="copyright">
+            © <span id="year"></span>
+            Weather Summary.
+        </p>
+
+    </footer>
 
 </main>
 
-</body>
 
-</html>
-</footer>
+<script>
+    document.getElementById("year").textContent =
+        new Date().getFullYear();
+</script>
 
 </body>
 </html>
