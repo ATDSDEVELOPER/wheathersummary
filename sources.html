@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+```
+<title>Weather Sources | Weather Summary</title>
+
+<meta name="description" content="Learn about the weather and geocoding data sources used by Weather Summary.">
+
+<meta name="robots" content="index, follow">
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f8fb;
+        color: #263238;
+        line-height: 1.7;
+    }
+
+    header {
+        background: linear-gradient(135deg, #2196f3, #03a9f4);
+        color: white;
+        padding: 35px 20px;
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: 34px;
+        margin-bottom: 8px;
+    }
+
+    header p {
+        font-size: 17px;
+        opacity: 0.95;
+    }
+
+    nav {
+        background: white;
+        padding: 14px 10px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    nav a {
+        color: #1976d2;
+        text-decoration: none;
+        margin: 0 12px;
+        font-weight: 600;
+    }
+
+    nav a:hover {
+        text-decoration: underline;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 35px auto;
+        padding: 0 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 30px;
+        margin-bottom: 25px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+        color: #1976d2;
+        margin-bottom: 15px;
+        font-size: 25px;
+    }
+
+    p {
+        margin-bottom: 15px;
+    }
+
+    ul {
+        padding-left: 25px;
+        margin-bottom: 15px;
+    }
+
+    li {
+        margin-bottom: 8px;
+    }
+
+    .highlight {
+        background: #e3f2fd;
+        border-left: 5px solid #2196f3;
+        padding: 18px;
+        border-radius: 6px;
+        margin-top: 15px;
+    }
+
+    .source-box {
+        background: #f8fafc;
+        border: 1px solid #e0e6eb;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+
+    .source-box h3 {
+        color: #1565c0;
+        margin-bottom: 8px;
+    }
+
+    .source-box a {
+        color: #1976d2;
+        word-break: break-word;
+    }
+
+    footer {
+        background: #263238;
+        color: white;
+        text-align: center;
+        padding: 25px 15px;
+        margin-top: 40px;
+    }
+
+    footer a {
+        color: #90caf9;
+        text-decoration: none;
+        margin: 0 8px;
+    }
+
+    footer a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+
+        header h1 {
+            font-size: 28px;
+        }
+
+        nav a {
+            display: inline-block;
+            margin: 5px 7px;
+        }
+
+        .card {
+            padding: 22px;
+        }
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<header>
+    <h1>🌐 Weather Data Sources</h1>
+    <p>Information about the data used by Weather Summary</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="sources.html">Weather Sources</a>
+    <a href="privacy-policy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="contact.html">Contact</a>
+</nav>
+
+<main class="container">
+
+```
+<section class="card">
+    <h2>🌤️ About Our Weather Data</h2>
+
+    <p>
+        Weather Summary uses external weather data services to provide
+        current weather information and weather forecasts for locations
+        searched by users.
+    </p>
+
+    <div class="highlight">
+        <strong>Primary data provider:</strong>
+        Weather Summary uses Open-Meteo weather and geocoding services
+        to provide weather forecasts and location-based weather information.
+    </div>
+</section>
+
+<section class="card">
+    <h2>🌦️ Open-Meteo</h2>
+
+    <p>
+        Open-Meteo provides weather forecast data that can be used by
+        applications and websites to display weather information.
+    </p>
+
+    <p>
+        Weather Summary retrieves weather-related information through
+        the Open-Meteo services and presents selected information in a
+        simple and user-friendly format.
+    </p>
+
+    <div class="source-box">
+        <h3>Open-Meteo</h3>
+
+        <p>
+            Official website:
+            <a href="https://open-meteo.com/"
+               target="_blank"
+               rel="noopener noreferrer">
+                https://open-meteo.com/
+            </a>
+        </p>
+
+        <p>
+            Open-Meteo API documentation:
+            <a href="https://open-meteo.com/en/docs"
+               target="_blank"
+               rel="noopener noreferrer">
+                https://open-meteo.com/en/docs
+            </a>
+        </p>
+    </div>
+</section>
+
+<section class="card">
+    <h2>📍 Location and Geocoding Data</h2>
+
+    <p>
+        When a user searches for a city or location, Weather Summary
+        uses geocoding services to identify the corresponding geographic
+        location and coordinates needed to retrieve weather information.
+    </p>
+
+    <p>
+        The location information is then used to request weather data
+        for the selected location.
+    </p>
+
+    <p>
+        Search results may vary depending on the information available
+        from the geocoding service.
+    </p>
+</section>
+
+<section class="card">
+    <h2>📊 Weather Information We Display</h2>
+
+    <p>
+        Depending on the selected location and available data, Weather
+        Summary may display information such as:
+    </p>
+
+    <ul>
+        <li>Current temperature</li>
+        <li>Feels-like temperature</li>
+        <li>Humidity</li>
+        <li>Wind speed</li>
+        <li>Wind direction</li>
+        <li>Atmospheric pressure</li>
+        <li>Precipitation probability</li>
+        <li>Rain and precipitation information</li>
+        <li>Hourly weather forecasts</li>
+        <li>Daily weather forecasts</li>
+        <li>Sunrise and sunset times</li>
+        <li>General weather conditions</li>
+    </ul>
+</section>
+
+<section class="card">
+    <h2>⚠️ Weather Data Accuracy</h2>
+
+    <p>
+        Weather forecasts are generated using weather models and
+        available meteorological data. Weather conditions can change
+        quickly, and forecast information may differ from actual
+        conditions.
+    </p>
+
+    <p>
+        Weather Summary does not guarantee that all weather information
+        displayed on the website will always be completely accurate,
+        current, or available.
+    </p>
+
+    <p>
+        We aim to present available weather information clearly, but
+        users should consider forecasts as informational rather than
+        guaranteed predictions.
+    </p>
+</section>
+
+<section class="card">
+    <h2>🚨 Emergency and Safety Information</h2>
+
+    <p>
+        Weather Summary is not an emergency warning service.
+        Information displayed on this website should not replace
+        official weather warnings, government alerts, or instructions
+        from local authorities.
+    </p>
+
+    <div class="highlight">
+        <strong>
+            For serious emergency situations, severe weather events,
+            or safety-critical decisions, users should rely on their
+            local official authorities and emergency services.
+        </strong>
+    </div>
+</section>
+
+<section class="card">
+    <h2>🔄 Updates and Improvements</h2>
+
+    <p>
+        We may update the website's features, weather data presentation,
+        and data sources from time to time in order to improve the
+        reliability and usability of Weather Summary.
+    </p>
+
+    <p>
+        Changes to this page will be made when the services or data
+        sources used by the website change.
+    </p>
+</section>
+
+<section class="card">
+    <h2>📄 Related Pages</h2>
+
+    <p>
+        Learn more about Weather Summary:
+    </p>
+
+    <ul>
+        <li>
+            <a href="about.html">About Weather Summary</a>
+        </li>
+
+        <li>
+            <a href="privacy-policy.html">Privacy Policy</a>
+        </li>
+
+        <li>
+            <a href="terms.html">Terms of Use</a>
+        </li>
+
+        <li>
+            <a href="contact.html">Contact Us</a>
+        </li>
+    </ul>
+</section>
+```
+
+</main>
+
+<footer>
+
+```
+<p>
+    © 2026 Weather Summary. All rights reserved.
+</p>
+
+<p>
+    <a href="index.html">Home</a> |
+    <a href="about.html">About</a> |
+    <a href="sources.html">Weather Sources</a> |
+    <a href="privacy-policy.html">Privacy Policy</a> |
+    <a href="terms.html">Terms of Use</a> |
+    <a href="contact.html">Contact</a>
+</p>
+```
+
+</footer>
+
+</body>
+</html>
