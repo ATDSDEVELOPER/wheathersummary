@@ -1039,6 +1039,13 @@ function getMyLocation() {
     showLoading();
 
 
+    const options = {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    };
+
+
     navigator.geolocation.getCurrentPosition(
 
         async function(position) {
@@ -1051,15 +1058,65 @@ function getMyLocation() {
                 position.coords.longitude;
 
 
+            let cityName = "Your Location";
+            let countryName = "";
+
+
+            try {
+
+                const reverseUrl =
+                    `https://geocoding-api.open-meteo.com/v1/search?` +
+                    `latitude=${latitude}` +
+                    `&longitude=${longitude}` +
+                    `&count=1` +
+                    `&language=en` +
+                    `&format=json`;
+
+
+                const response =
+                    await fetch(reverseUrl);
+
+
+                if (response.ok) {
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        data.results &&
+                        data.results.length > 0
+                    ) {
+
+                        cityName =
+                            data.results[0].name;
+
+                        countryName =
+                            data.results[0].country || "";
+
+                    }
+
+                }
+
+            } catch (err) {
+
+                console.warn(
+                    "Reverse geocoding failed, using fallback name:",
+                    err
+                );
+
+            }
+
+
             await getWeather(
 
                 latitude,
 
                 longitude,
 
-                "Your Location",
+                cityName,
 
-                ""
+                countryName
 
             );
 
@@ -1070,13 +1127,52 @@ function getMyLocation() {
 
             console.error(error);
 
-            showError(
-                "Unable to access your location. Please allow location permission."
-            );
-
             hideLoading();
 
-        }
+
+            switch (error.code) {
+
+                case error.PERMISSION_DENIED:
+
+                    showError(
+                        "Location permission denied or blocked by system overlays. Please enable location or close floating apps, then try again."
+                    );
+
+                    break;
+
+
+                case error.POSITION_UNAVAILABLE:
+
+                    showError(
+                        "Location information is unavailable. Please search manually."
+                    );
+
+                    break;
+
+
+                case error.TIMEOUT:
+
+                    showError(
+                        "Location request timed out. Please try again."
+                    );
+
+                    break;
+
+
+                default:
+
+                    showError(
+                        "An unknown location error occurred."
+                    );
+
+                    break;
+
+            }
+
+        },
+
+
+        options
 
     );
 
