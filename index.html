@@ -2,53 +2,54 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-          content="Weather Summary provides current weather, hourly forecasts, 7-day forecasts, humidity, wind speed, pressure, rain probability, sunrise, sunset and location-based weather information.">
+          content="Weather Summary provides current weather, hourly forecasts, 7-day forecasts, weather alerts, humidity, wind speed, pressure and location-based weather information.">
 
-    <meta name="keywords"
-          content="weather, weather forecast, live weather, hourly weather, 7 day forecast, humidity, wind, pressure">
-
-    <meta name="author"
-          content="Weather Summary">
+    <meta name="robots"
+          content="index, follow">
 
     <title>Weather Summary - Live Weather & Forecast</title>
 
-    <link rel="stylesheet" href="style.css">
-
+    <link rel="stylesheet"
+          href="style.css">
 </head>
-
 
 <body>
 
-
 <main class="app">
 
+    <!-- HEADER -->
 
-    <!-- ==============================
-         NAVIGATION
-    =============================== -->
+    <header class="header">
 
-    <nav class="site-nav">
+        <h1>🌤️ Weather Summary</h1>
 
-        <a href="index.html">
-            Home
-        </a>
+        <p>
+            Live weather, hourly forecast and 7-day forecast
+        </p>
 
-        <a href="about.html">
-            About
-        </a>
+    </header>
 
-        <a href="sources.html">
+
+    <!-- NAVIGATION -->
+
+    <nav class="site-nav"
+         aria-label="Main navigation">
+
+        <a href="index.html">Home</a>
+
+        <a href="about.html">About</a>
+
+        <a href="weather-sources.html">
             Weather Sources
         </a>
 
-        <a href="privacy.html">
+        <a href="privacy-policy.html">
             Privacy Policy
         </a>
 
@@ -63,28 +64,7 @@
     </nav>
 
 
-
-    <!-- ==============================
-         HEADER
-    =============================== -->
-
-    <header class="header">
-
-        <h1>
-            🌤️ Weather Summary
-        </h1>
-
-        <p>
-            Live weather, hourly forecast and 7-day forecast
-        </p>
-
-    </header>
-
-
-
-    <!-- ==============================
-         SEARCH
-    =============================== -->
+    <!-- SEARCH -->
 
     <section class="search-section">
 
@@ -92,56 +72,38 @@
             type="text"
             id="cityInput"
             placeholder="Enter city name..."
-            aria-label="Enter city name"
-            autocomplete="off"
+            aria-label="City name"
         >
 
-        <button
-            id="searchButton"
-            type="button">
-
+        <button id="searchButton">
             🔍 Search
-
         </button>
 
-
-        <button
-            id="locationButton"
-            type="button">
-
+        <button id="locationButton">
             📍 My Location
-
         </button>
 
     </section>
 
 
+    <!-- LOADING -->
 
-    <!-- ==============================
-         STATUS
-    =============================== -->
-
-    <div
-        id="loading"
-        class="loading hidden">
+    <div id="loading"
+         class="loading hidden">
 
         Loading weather...
 
     </div>
 
 
-    <div
-        id="error"
-        class="error hidden"
-        role="alert">
+    <!-- ERROR -->
 
+    <div id="error"
+         class="error hidden">
     </div>
 
 
-
-    <!-- ==============================
-         CURRENT WEATHER
-    =============================== -->
+    <!-- CURRENT WEATHER -->
 
     <section class="card current-weather">
 
@@ -156,9 +118,8 @@
 
         <div class="main-weather">
 
-            <div
-                id="weatherIcon"
-                class="weather-icon">
+            <div id="weatherIcon"
+                 class="weather-icon">
 
                 🌤️
 
@@ -187,19 +148,13 @@
         </div>
 
 
-
-        <!-- ==============================
-             WEATHER DETAILS
-        =============================== -->
+        <!-- WEATHER DETAILS -->
 
         <div class="details">
 
-
             <div class="detail">
 
-                <span>
-                    💧
-                </span>
+                <span>💧</span>
 
                 <strong id="humidity">
                     --%
@@ -212,12 +167,9 @@
             </div>
 
 
-
             <div class="detail">
 
-                <span>
-                    💨
-                </span>
+                <span>💨</span>
 
                 <strong id="wind">
                     -- km/h
@@ -230,12 +182,9 @@
             </div>
 
 
-
             <div class="detail">
 
-                <span>
-                    🌧️
-                </span>
+                <span>🌧️</span>
 
                 <strong id="rainChance">
                     --%
@@ -248,12 +197,9 @@
             </div>
 
 
-
             <div class="detail">
 
-                <span>
-                    🌡️
-                </span>
+                <span>🌡️</span>
 
                 <strong id="pressure">
                     -- hPa
@@ -265,16 +211,12 @@
 
             </div>
 
-
         </div>
 
     </section>
 
 
-
-    <!-- ==============================
-         WEATHER SUMMARY
-    =============================== -->
+    <!-- SUMMARY -->
 
     <section class="card summary-card">
 
@@ -292,35 +234,7 @@
     </section>
 
 
-
-    <!-- ==============================
-         ADVERTISEMENT SPACE
-    =============================== -->
-
-    <!--
-        IMPORTANT:
-
-        Do not put an example AdSense code here.
-
-        After Google approves/connects your website,
-        use the exact AdSense code supplied by Google.
-    -->
-
-    <section
-        class="ad-container"
-        aria-label="Advertisement">
-
-        <span>
-            Advertisement
-        </span>
-
-    </section>
-
-
-
-    <!-- ==============================
-         WEATHER ALERTS
-    =============================== -->
+    <!-- ALERTS -->
 
     <section class="card alerts-section">
 
@@ -332,15 +246,13 @@
 
             <div class="no-alert">
 
-                🔵 Official weather alert information
-                will appear here when an authoritative
-                alert service is available.
+                🔵 Alert information will appear here.
 
                 <br><br>
 
-                For emergencies, always follow
-                instructions from your local
-                government and emergency authorities.
+                Weather alerts should always be
+                checked against official local
+                authorities.
 
             </div>
 
@@ -349,10 +261,7 @@
     </section>
 
 
-
-    <!-- ==============================
-         HOURLY FORECAST
-    =============================== -->
+    <!-- HOURLY FORECAST -->
 
     <section class="card forecast-section">
 
@@ -360,13 +269,12 @@
             🕐 24-Hour Forecast
         </h2>
 
-        <div
-            id="hourlyForecast"
-            class="hourly-container">
+        <div id="hourlyForecast"
+             class="hourly-container">
 
             <p>
-                Search for a city to see
-                the hourly forecast.
+                Search for a city to see the
+                hourly forecast.
             </p>
 
         </div>
@@ -374,10 +282,7 @@
     </section>
 
 
-
-    <!-- ==============================
-         7 DAY FORECAST
-    =============================== -->
+    <!-- 7 DAY FORECAST -->
 
     <section class="card forecast-section">
 
@@ -385,13 +290,12 @@
             📅 7-Day Forecast
         </h2>
 
-        <div
-            id="dailyForecast"
-            class="daily-container">
+        <div id="dailyForecast"
+             class="daily-container">
 
             <p>
-                Search for a city to see
-                the 7-day forecast.
+                Search for a city to see the
+                7-day forecast.
             </p>
 
         </div>
@@ -399,19 +303,13 @@
     </section>
 
 
-
-    <!-- ==============================
-         SUNRISE / SUNSET
-    =============================== -->
+    <!-- SUNRISE / SUNSET -->
 
     <section class="card sun-section">
 
-
         <div class="sun-item">
 
-            <span>
-                🌅
-            </span>
+            <span>🌅</span>
 
             <strong id="sunrise">
                 --
@@ -424,12 +322,9 @@
         </div>
 
 
-
         <div class="sun-item">
 
-            <span>
-                🌇
-            </span>
+            <span>🌇</span>
 
             <strong id="sunset">
                 --
@@ -441,23 +336,23 @@
 
         </div>
 
-
     </section>
 
 
-
-    <!-- ==============================
-         FOOTER
-    =============================== -->
+    <!-- FOOTER -->
 
     <footer>
-
 
         <p>
             Weather data provided by
             Open-Meteo.
         </p>
 
+        <p>
+            <a href="weather-sources.html">
+                Weather Sources
+            </a>
+        </p>
 
         <div class="footer-links">
 
@@ -465,11 +360,7 @@
                 About
             </a>
 
-            <a href="sources.html">
-                Weather Sources
-            </a>
-
-            <a href="privacy.html">
+            <a href="privacy-policy.html">
                 Privacy Policy
             </a>
 
@@ -483,17 +374,7 @@
 
         </div>
 
-
-        <p class="copyright">
-
-            © 2026 Weather Summary.
-            All rights reserved.
-
-        </p>
-
-
     </footer>
-
 
 </main>
 
