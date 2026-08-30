@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Weather Summary</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <main class="app">
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <h1>🌤️ Weather Summary</h1>
+
+            <p>
+                Current weather, hourly forecast and 7-day forecast
+            </p>
+
+        </header>
+
+
+        <!-- SEARCH -->
+
+        <section class="search-section">
+
+            <input
+                type="text"
+                id="cityInput"
+                placeholder="Enter city name..."
+            >
+
+            <button id="searchButton">
+                🔍 Search
+            </button>
+
+            <button id="locationButton">
+                📍 My Location
+            </button>
+
+        </section>
+
+
+        <!-- LOADING -->
+
+        <div
+            id="loading"
+            class="loading hidden"
+        >
+            Loading weather...
+        </div>
+
+
+        <!-- ERROR -->
+
+        <div
+            id="error"
+            class="error hidden"
+        >
+        </div>
+
+
+        <!-- CURRENT WEATHER -->
+
+        <section class="card current-weather">
+
+            <h2 id="city">
+                Search for a city
+            </h2>
+
+            <p id="date">
+                --
+            </p>
+
+
+            <div class="main-weather">
+
+                <div
+                    id="weatherIcon"
+                    class="weather-icon"
+                >
+                    🌤️
+                </div>
+
+
+                <div class="temperature-area">
+
+                    <div id="temperature">
+                        --°C
+                    </div>
+
+                    <div id="condition">
+                        --
+                    </div>
+
+                    <p>
+                        Feels like
+                        <span id="feelsLike">
+                            --°C
+                        </span>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- WEATHER DETAILS -->
+
+            <div class="details">
+
+                <div class="detail">
+
+                    <span>💧</span>
+
+                    <strong id="humidity">
+                        --%
+                    </strong>
+
+                    <small>
+                        Humidity
+                    </small>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span>💨</span>
+
+                    <strong id="wind">
+                        -- km/h
+                    </strong>
+
+                    <small>
+                        Wind
+                    </small>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span>🌧️</span>
+
+                    <strong id="rainChance">
+                        --%
+                    </strong>
+
+                    <small>
+                        Rain Chance
+                    </small>
+
+                </div>
+
+
+                <div class="detail">
+
+                    <span>🌡️</span>
+
+                    <strong id="pressure">
+                        -- hPa
+                    </strong>
+
+                    <small>
+                        Pressure
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- WEATHER SUMMARY -->
+
+        <section class="card summary-card">
+
+            <h2>📝 Today's Summary</h2>
+
+            <p id="summary">
+                Search for a city to see today's weather summary.
+            </p>
+
+        </section>
+
+
+        <!-- ALERTS -->
+
+        <section class="card alerts-section">
+
+            <h2>
+                ⚠️ Weather & Emergency Alerts
+            </h2>
+
+            <div id="alerts">
+
+                <div class="no-alert">
+
+                    🔵 Alert information will appear here.
+
+                    <br><br>
+
+                    Emergency alerts such as
+                    storms, tornadoes, floods,
+                    earthquakes and tsunamis require
+                    an authoritative alert service.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- HOURLY FORECAST -->
+
+        <section class="card forecast-section">
+
+            <h2>
+                🕐 24-Hour Forecast
+            </h2>
+
+            <div
+                id="hourlyForecast"
+                class="hourly-container"
+            >
+
+                <p>
+                    Search for a city to see the hourly forecast.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- 7 DAY FORECAST -->
+
+        <section class="card forecast-section">
+
+            <h2>
+                📅 7-Day Forecast
+            </h2>
+
+            <div
+                id="dailyForecast"
+                class="daily-container"
+            >
+
+                <p>
+                    Search for a city to see the 7-day forecast.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- SUNRISE / SUNSET -->
+
+        <section class="card sun-section">
+
+            <div class="sun-item">
+
+                <span>🌅</span>
+
+                <strong id="sunrise">
+                    --
+                </strong>
+
+                <small>
+                    Sunrise
+                </small>
+
+            </div>
+
+
+            <div class="sun-item">
+
+                <span>🌇</span>
+
+                <strong id="sunset">
+                    --
+                </strong>
+
+                <small>
+                    Sunset
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <p>
+                Weather data provided by Open-Meteo
+            </p>
+
+        </footer>
+
+    </main>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
