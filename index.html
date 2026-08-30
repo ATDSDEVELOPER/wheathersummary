@@ -1,41 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<nav class="site-nav">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="sources.html">Weather Sources</a>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms of Use</a>
-    <a href="contact.html">Contact</a>
-</nav>
-
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-          content="Weather Summary provides current weather, hourly forecasts, 7-day forecasts, humidity, wind speed, pressure, rainfall probability and location-based weather information.">
+          content="Weather Summary provides current weather, hourly forecasts, 7-day forecasts, humidity, wind speed, pressure, rain probability, sunrise, sunset and location-based weather information.">
 
-    <meta name="robots"
-          content="index, follow">
+    <meta name="keywords"
+          content="weather, weather forecast, live weather, hourly weather, 7 day forecast, humidity, wind, pressure">
 
-    <title>Weather Summary - Live Weather Forecast</title>
+    <meta name="author"
+          content="Weather Summary">
+
+    <title>Weather Summary - Live Weather & Forecast</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
+
 
 <body>
 
+
 <main class="app">
 
-    <!-- HEADER -->
+
+    <!-- ==============================
+         NAVIGATION
+    =============================== -->
+
+    <nav class="site-nav">
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="about.html">
+            About
+        </a>
+
+        <a href="sources.html">
+            Weather Sources
+        </a>
+
+        <a href="privacy.html">
+            Privacy Policy
+        </a>
+
+        <a href="terms.html">
+            Terms of Use
+        </a>
+
+        <a href="contact.html">
+            Contact
+        </a>
+
+    </nav>
+
+
+
+    <!-- ==============================
+         HEADER
+    =============================== -->
 
     <header class="header">
 
-        <h1>🌤️ Weather Summary</h1>
+        <h1>
+            🌤️ Weather Summary
+        </h1>
 
         <p>
             Live weather, hourly forecast and 7-day forecast
@@ -44,7 +81,10 @@
     </header>
 
 
-    <!-- SEARCH -->
+
+    <!-- ==============================
+         SEARCH
+    =============================== -->
 
     <section class="search-section">
 
@@ -52,33 +92,34 @@
             type="text"
             id="cityInput"
             placeholder="Enter city name..."
+            aria-label="Enter city name"
             autocomplete="off"
         >
 
         <button
             id="searchButton"
             type="button">
+
             🔍 Search
+
         </button>
+
 
         <button
             id="locationButton"
             type="button">
+
             📍 My Location
+
         </button>
 
     </section>
 
 
-    <!-- LOCATION STATUS -->
 
-    <div
-        id="locationStatus"
-        class="location-status hidden">
-    </div>
-
-
-    <!-- LOADING -->
+    <!-- ==============================
+         STATUS
+    =============================== -->
 
     <div
         id="loading"
@@ -89,15 +130,18 @@
     </div>
 
 
-    <!-- ERROR -->
-
     <div
         id="error"
-        class="error hidden">
+        class="error hidden"
+        role="alert">
+
     </div>
 
 
-    <!-- CURRENT WEATHER -->
+
+    <!-- ==============================
+         CURRENT WEATHER
+    =============================== -->
 
     <section class="card current-weather">
 
@@ -115,7 +159,9 @@
             <div
                 id="weatherIcon"
                 class="weather-icon">
+
                 🌤️
+
             </div>
 
 
@@ -141,13 +187,19 @@
         </div>
 
 
-        <!-- DETAILS -->
+
+        <!-- ==============================
+             WEATHER DETAILS
+        =============================== -->
 
         <div class="details">
 
+
             <div class="detail">
 
-                <span>💧</span>
+                <span>
+                    💧
+                </span>
 
                 <strong id="humidity">
                     --%
@@ -160,9 +212,12 @@
             </div>
 
 
+
             <div class="detail">
 
-                <span>💨</span>
+                <span>
+                    💨
+                </span>
 
                 <strong id="wind">
                     -- km/h
@@ -175,9 +230,12 @@
             </div>
 
 
+
             <div class="detail">
 
-                <span>🌧️</span>
+                <span>
+                    🌧️
+                </span>
 
                 <strong id="rainChance">
                     --%
@@ -190,9 +248,12 @@
             </div>
 
 
+
             <div class="detail">
 
-                <span>🌡️</span>
+                <span>
+                    🌡️
+                </span>
 
                 <strong id="pressure">
                     -- hPa
@@ -204,12 +265,16 @@
 
             </div>
 
+
         </div>
 
     </section>
 
 
-    <!-- SUMMARY -->
+
+    <!-- ==============================
+         WEATHER SUMMARY
+    =============================== -->
 
     <section class="card summary-card">
 
@@ -219,15 +284,43 @@
 
         <p id="summary">
 
-            Search for a city to see
-            today's weather summary.
+            Search for a city to see today's
+            weather summary.
 
         </p>
 
     </section>
 
 
-    <!-- ALERTS -->
+
+    <!-- ==============================
+         ADVERTISEMENT SPACE
+    =============================== -->
+
+    <!--
+        IMPORTANT:
+
+        Do not put an example AdSense code here.
+
+        After Google approves/connects your website,
+        use the exact AdSense code supplied by Google.
+    -->
+
+    <section
+        class="ad-container"
+        aria-label="Advertisement">
+
+        <span>
+            Advertisement
+        </span>
+
+    </section>
+
+
+
+    <!-- ==============================
+         WEATHER ALERTS
+    =============================== -->
 
     <section class="card alerts-section">
 
@@ -239,14 +332,15 @@
 
             <div class="no-alert">
 
-                🔵 Alert information will
-                appear here.
+                🔵 Official weather alert information
+                will appear here when an authoritative
+                alert service is available.
 
                 <br><br>
 
-                This section is ready for
-                an authoritative weather
-                alert service.
+                For emergencies, always follow
+                instructions from your local
+                government and emergency authorities.
 
             </div>
 
@@ -255,7 +349,10 @@
     </section>
 
 
-    <!-- HOURLY -->
+
+    <!-- ==============================
+         HOURLY FORECAST
+    =============================== -->
 
     <section class="card forecast-section">
 
@@ -277,7 +374,10 @@
     </section>
 
 
-    <!-- DAILY -->
+
+    <!-- ==============================
+         7 DAY FORECAST
+    =============================== -->
 
     <section class="card forecast-section">
 
@@ -299,13 +399,19 @@
     </section>
 
 
-    <!-- SUN -->
+
+    <!-- ==============================
+         SUNRISE / SUNSET
+    =============================== -->
 
     <section class="card sun-section">
 
+
         <div class="sun-item">
 
-            <span>🌅</span>
+            <span>
+                🌅
+            </span>
 
             <strong id="sunrise">
                 --
@@ -318,9 +424,12 @@
         </div>
 
 
+
         <div class="sun-item">
 
-            <span>🌇</span>
+            <span>
+                🌇
+            </span>
 
             <strong id="sunset">
                 --
@@ -332,23 +441,59 @@
 
         </div>
 
+
     </section>
 
 
-    <!-- FOOTER -->
+
+    <!-- ==============================
+         FOOTER
+    =============================== -->
 
     <footer>
 
-        <p>
-            Weather data provided by Open-Meteo
-        </p>
 
         <p>
-            Use of location services requires
-            browser permission.
+            Weather data provided by
+            Open-Meteo.
         </p>
+
+
+        <div class="footer-links">
+
+            <a href="about.html">
+                About
+            </a>
+
+            <a href="sources.html">
+                Weather Sources
+            </a>
+
+            <a href="privacy.html">
+                Privacy Policy
+            </a>
+
+            <a href="terms.html">
+                Terms of Use
+            </a>
+
+            <a href="contact.html">
+                Contact
+            </a>
+
+        </div>
+
+
+        <p class="copyright">
+
+            © 2026 Weather Summary.
+            All rights reserved.
+
+        </p>
+
 
     </footer>
+
 
 </main>
 
