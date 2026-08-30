@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,9 +8,10 @@
           content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-          content="Weather Summary provides live weather, hourly forecasts, 7-day forecasts, humidity, wind speed, pressure, rain chances and weather alerts.">
+          content="Weather Summary provides current weather, hourly forecasts, 7-day forecasts, humidity, wind speed, pressure, rainfall probability and location-based weather information.">
 
-    <meta name="robots" content="index, follow">
+    <meta name="robots"
+          content="index, follow">
 
     <title>Weather Summary - Live Weather Forecast</title>
 
@@ -23,6 +23,7 @@
 <main class="app">
 
     <!-- HEADER -->
+
     <header class="header">
 
         <h1>🌤️ Weather Summary</h1>
@@ -35,6 +36,7 @@
 
 
     <!-- SEARCH -->
+
     <section class="search-section">
 
         <input
@@ -59,12 +61,26 @@
     </section>
 
 
-    <!-- STATUS -->
+    <!-- LOCATION STATUS -->
+
+    <div
+        id="locationStatus"
+        class="location-status hidden">
+    </div>
+
+
+    <!-- LOADING -->
+
     <div
         id="loading"
         class="loading hidden">
+
         Loading weather...
+
     </div>
+
+
+    <!-- ERROR -->
 
     <div
         id="error"
@@ -73,6 +89,7 @@
 
 
     <!-- CURRENT WEATHER -->
+
     <section class="card current-weather">
 
         <h2 id="city">
@@ -116,49 +133,66 @@
 
 
         <!-- DETAILS -->
+
         <div class="details">
 
             <div class="detail">
+
                 <span>💧</span>
 
                 <strong id="humidity">
                     --%
                 </strong>
 
-                <small>Humidity</small>
+                <small>
+                    Humidity
+                </small>
+
             </div>
 
 
             <div class="detail">
+
                 <span>💨</span>
 
                 <strong id="wind">
                     -- km/h
                 </strong>
 
-                <small>Wind</small>
+                <small>
+                    Wind
+                </small>
+
             </div>
 
 
             <div class="detail">
+
                 <span>🌧️</span>
 
                 <strong id="rainChance">
                     --%
                 </strong>
 
-                <small>Rain Chance</small>
+                <small>
+                    Rain Chance
+                </small>
+
             </div>
 
 
             <div class="detail">
+
                 <span>🌡️</span>
 
                 <strong id="pressure">
                     -- hPa
                 </strong>
 
-                <small>Pressure</small>
+                <small>
+                    Pressure
+                </small>
+
             </div>
 
         </div>
@@ -167,18 +201,25 @@
 
 
     <!-- SUMMARY -->
+
     <section class="card summary-card">
 
-        <h2>📝 Today's Summary</h2>
+        <h2>
+            📝 Today's Summary
+        </h2>
 
         <p id="summary">
-            Search for a city or use My Location to see today's weather summary.
+
+            Search for a city to see
+            today's weather summary.
+
         </p>
 
     </section>
 
 
     <!-- ALERTS -->
+
     <section class="card alerts-section">
 
         <h2>
@@ -189,12 +230,14 @@
 
             <div class="no-alert">
 
-                🔵 Weather alert information will appear here.
+                🔵 Alert information will
+                appear here.
 
                 <br><br>
 
-                Always check official local authorities for
-                emergency warnings and instructions.
+                This section is ready for
+                an authoritative weather
+                alert service.
 
             </div>
 
@@ -204,6 +247,7 @@
 
 
     <!-- HOURLY -->
+
     <section class="card forecast-section">
 
         <h2>
@@ -215,7 +259,8 @@
             class="hourly-container">
 
             <p>
-                Search for a city to see the hourly forecast.
+                Search for a city to see
+                the hourly forecast.
             </p>
 
         </div>
@@ -224,6 +269,7 @@
 
 
     <!-- DAILY -->
+
     <section class="card forecast-section">
 
         <h2>
@@ -235,7 +281,8 @@
             class="daily-container">
 
             <p>
-                Search for a city to see the 7-day forecast.
+                Search for a city to see
+                the 7-day forecast.
             </p>
 
         </div>
@@ -244,6 +291,7 @@
 
 
     <!-- SUN -->
+
     <section class="card sun-section">
 
         <div class="sun-item">
@@ -279,6 +327,7 @@
 
 
     <!-- FOOTER -->
+
     <footer>
 
         <p>
@@ -286,8 +335,8 @@
         </p>
 
         <p>
-            Weather Summary provides forecast information
-            for general informational purposes.
+            Use of location services requires
+            browser permission.
         </p>
 
     </footer>
@@ -298,5 +347,5 @@
 <script src="script.js"></script>
 
 </body>
+
 </html>
-```
