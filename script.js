@@ -1,905 +1,524 @@
-"use strict";
-
 /* =========================================
-   GET HTML ELEMENTS
+   RESET
 ========================================= */
 
-const cityInput =
-    document.getElementById("cityInput");
-
-const searchButton =
-    document.getElementById("searchButton");
-
-const locationButton =
-    document.getElementById("locationButton");
-
-const cityElement =
-    document.getElementById("city");
-
-const dateElement =
-    document.getElementById("date");
-
-const weatherIconElement =
-    document.getElementById("weatherIcon");
-
-const temperatureElement =
-    document.getElementById("temperature");
-
-const conditionElement =
-    document.getElementById("condition");
-
-const feelsLikeElement =
-    document.getElementById("feelsLike");
-
-const humidityElement =
-    document.getElementById("humidity");
-
-const windElement =
-    document.getElementById("wind");
-
-const rainChanceElement =
-    document.getElementById("rainChance");
-
-const pressureElement =
-    document.getElementById("pressure");
-
-const summaryElement =
-    document.getElementById("summary");
-
-const hourlyElement =
-    document.getElementById("hourlyForecast");
-
-const dailyElement =
-    document.getElementById("dailyForecast");
-
-const sunriseElement =
-    document.getElementById("sunrise");
-
-const sunsetElement =
-    document.getElementById("sunset");
-
-const alertsElement =
-    document.getElementById("alerts");
-
-const loadingElement =
-    document.getElementById("loading");
-
-const errorElement =
-    document.getElementById("error");
-
-const locationStatusElement =
-    document.getElementById("locationStatus");
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 
 /* =========================================
-   API URLS
+   BODY
 ========================================= */
 
-const WEATHER_API =
-    "https://api.open-meteo.com/v1/forecast";
+body {
 
-const GEOCODING_API =
-    "https://geocoding-api.open-meteo.com/v1/search";
+    min-height: 100vh;
 
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-/* =========================================
-   BUTTON EVENTS
-========================================= */
-
-searchButton.addEventListener(
-    "click",
-    searchWeather
-);
-
-
-cityInput.addEventListener(
-    "keydown",
-    function (event) {
-
-        if (event.key === "Enter") {
-
-            searchWeather();
-
-        }
-
-    }
-);
-
-
-locationButton.addEventListener(
-    "click",
-    getMyLocation
-);
-
-
-/* =========================================
-   SEARCH CITY
-========================================= */
-
-async function searchWeather() {
-
-    const city =
-        cityInput.value.trim();
-
-
-    if (!city) {
-
-        showError(
-            "Please enter a city name."
+    background:
+        linear-gradient(
+            135deg,
+            #38bdf8,
+            #2563eb,
+            #1e1b4b
         );
 
-        return;
+    color: white;
 
-    }
-
-
-    try {
-
-        showLoading();
-
-        hideError();
-
-        hideLocationStatus();
-
-
-        const url =
-            `${GEOCODING_API}?` +
-            `name=${encodeURIComponent(city)}` +
-            `&count=1` +
-            `&language=en` +
-            `&format=json`;
-
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET"
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Geocoding API returned HTTP ${response.status}`
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if (
-            !data.results ||
-            data.results.length === 0
-        ) {
-
-            showError(
-                "City not found. Please check the spelling and try again."
-            );
-
-            return;
-
-        }
-
-
-        const location =
-            data.results[0];
-
-
-        if (
-            !Number.isFinite(
-                Number(location.latitude)
-            ) ||
-            !Number.isFinite(
-                Number(location.longitude)
-            )
-        ) {
-
-            throw new Error(
-                "The location coordinates are invalid."
-            );
-
-        }
-
-
-        await getWeather(
-
-            Number(location.latitude),
-
-            Number(location.longitude),
-
-            location.name,
-
-            location.country || ""
-
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "City search error:",
-            error
-        );
-
-
-        showError(
-            "Unable to find this city. Please check your internet connection and try again."
-        );
-
-    } finally {
-
-        hideLoading();
-
-    }
+    padding: 20px;
 
 }
 
 
 /* =========================================
-   GET WEATHER
+   MAIN APP
 ========================================= */
 
-async function getWeather(
-    latitude,
-    longitude,
-    name,
-    country
-) {
+.app {
 
-    try {
+    width: 100%;
 
-        showLoading();
+    max-width: 1000px;
 
-        hideError();
-
-
-        /* Validate coordinates */
-
-        if (
-            !Number.isFinite(latitude) ||
-            !Number.isFinite(longitude)
-        ) {
-
-            throw new Error(
-                "Invalid latitude or longitude."
-            );
-
-        }
-
-
-        if (
-            latitude < -90 ||
-            latitude > 90 ||
-            longitude < -180 ||
-            longitude > 180
-        ) {
-
-            throw new Error(
-                "Coordinates are outside the valid range."
-            );
-
-        }
-
-
-        /*
-         * Open-Meteo forecast request.
-         */
-
-        const params =
-            new URLSearchParams({
-
-                latitude:
-                    latitude.toString(),
-
-                longitude:
-                    longitude.toString(),
-
-                current:
-                    [
-                        "temperature_2m",
-                        "relative_humidity_2m",
-                        "apparent_temperature",
-                        "pressure_msl",
-                        "wind_speed_10m",
-                        "weather_code"
-                    ].join(","),
-
-                hourly:
-                    [
-                        "temperature_2m",
-                        "precipitation_probability",
-                        "weather_code",
-                        "wind_speed_10m"
-                    ].join(","),
-
-                daily:
-                    [
-                        "weather_code",
-                        "temperature_2m_max",
-                        "temperature_2m_min",
-                        "precipitation_probability_max",
-                        "sunrise",
-                        "sunset"
-                    ].join(","),
-
-                timezone:
-                    "auto",
-
-                forecast_days:
-                    "7"
-
-            });
-
-
-        const url =
-            `${WEATHER_API}?${params.toString()}`;
-
-
-        console.log(
-            "Weather request:",
-            url
-        );
-
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET"
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Weather API returned HTTP ${response.status}`
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "Weather data:",
-            data
-        );
-
-
-        /*
-         * Check that the API returned
-         * the important data sections.
-         */
-
-        if (
-            !data.current ||
-            !data.hourly ||
-            !data.daily
-        ) {
-
-            throw new Error(
-                "The weather API returned incomplete data."
-            );
-
-        }
-
-
-        /* Display all weather information */
-
-        displayCurrentWeather(
-            data,
-            name,
-            country
-        );
-
-
-        displayHourlyForecast(
-            data
-        );
-
-
-        displayDailyForecast(
-            data
-        );
-
-
-        displaySummary(
-            data
-        );
-
-
-        displaySunTimes(
-            data
-        );
-
-
-        displayNoAlerts();
-
-
-        /*
-         * Tell the user that location
-         * weather was successfully loaded.
-         */
-
-        if (
-            name === "Your Location"
-        ) {
-
-            showLocationStatus(
-                "📍 Weather loaded successfully for your current location."
-            );
-
-        }
-
-
-    } catch (error) {
-
-        console.error(
-            "Weather loading error:",
-            error
-        );
-
-
-        /*
-         * IMPORTANT:
-         * Show a useful error instead of
-         * hiding the real problem.
-         */
-
-        if (
-            name === "Your Location"
-        ) {
-
-            showError(
-                "Unable to load weather for your location. Please check your internet connection and try again."
-            );
-
-        } else {
-
-            showError(
-                "Unable to load weather information. Please try again."
-            );
-
-        }
-
-    } finally {
-
-        hideLoading();
-
-    }
+    margin: auto;
 
 }
 
 
 /* =========================================
-   DISPLAY CURRENT WEATHER
+   NAVIGATION
 ========================================= */
 
-function displayCurrentWeather(
-    data,
-    name,
-    country
-) {
+.site-nav {
 
-    const current =
-        data.current;
+    display: flex;
 
+    justify-content: center;
 
-    cityElement.textContent =
-        country
-            ? `${name}, ${country}`
-            : name;
+    align-items: center;
 
+    flex-wrap: wrap;
 
-    /*
-     * Open-Meteo returns local time when
-     * timezone=auto is used.
-     *
-     * We display the API timestamp directly
-     * rather than relying on the user's timezone.
-     */
+    gap: 8px;
 
-    dateElement.textContent =
-        formatApiDateTime(
-            current.time
-        );
+    margin-bottom: 30px;
+
+}
 
 
-    temperatureElement.textContent =
-        `${Math.round(
-            Number(current.temperature_2m)
-        )}°C`;
+.site-nav a {
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 9px 13px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,255,255,0.12);
+
+    font-size: 14px;
+
+    transition: 0.2s;
+
+}
 
 
-    feelsLikeElement.textContent =
-        `${Math.round(
-            Number(current.apparent_temperature)
-        )}°C`;
+.site-nav a:hover {
 
+    background:
+        rgba(255,255,255,0.25);
 
-    humidityElement.textContent =
-        `${Math.round(
-            Number(current.relative_humidity_2m)
-        )}%`;
-
-
-    windElement.textContent =
-        `${Math.round(
-            Number(current.wind_speed_10m)
-        )} km/h`;
-
-
-    pressureElement.textContent =
-        `${Math.round(
-            Number(current.pressure_msl)
-        )} hPa`;
-
-
-    const currentHour =
-        findCurrentHourIndex(
-            data.hourly,
-            current.time
-        );
-
-
-    let rainChance = 0;
-
-
-    if (
-        currentHour >= 0 &&
-        Array.isArray(
-            data.hourly.precipitation_probability
-        )
-    ) {
-
-        rainChance =
-            Number(
-                data.hourly
-                    .precipitation_probability[
-                        currentHour
-                    ]
-            ) || 0;
-
-    }
-
-
-    rainChanceElement.textContent =
-        `${Math.round(rainChance)}%`;
-
-
-    const code =
-        Number(current.weather_code);
-
-
-    conditionElement.textContent =
-        getWeatherDescription(
-            code
-        );
-
-
-    weatherIconElement.textContent =
-        getWeatherIcon(
-            code
-        );
+    transform:
+        translateY(-1px);
 
 }
 
 
 /* =========================================
-   FIND CURRENT HOUR
+   HEADER
 ========================================= */
 
-function findCurrentHourIndex(
-    hourly,
-    currentTime
-) {
+.header {
 
-    if (
-        !hourly ||
-        !Array.isArray(hourly.time)
-    ) {
+    text-align: center;
 
-        return 0;
+    margin-bottom: 30px;
 
-    }
+}
 
 
-    /*
-     * Open-Meteo's timezone=auto returns
-     * local timestamps.
-     *
-     * Compare the YYYY-MM-DDTHH:MM parts
-     * instead of converting them through
-     * the browser's timezone.
-     */
+.header h1 {
 
-    const target =
-        String(currentTime)
-            .slice(0, 16);
+    font-size: 40px;
+
+    margin-bottom: 10px;
+
+}
 
 
-    for (
-        let i = 0;
-        i < hourly.time.length;
-        i++
-    ) {
+.header p {
 
-        if (
-            String(hourly.time[i])
-                .slice(0, 16) >= target
-        ) {
+    opacity: 0.85;
 
-            return i;
-
-        }
-
-    }
-
-
-    return 0;
+    font-size: 16px;
 
 }
 
 
 /* =========================================
-   WEATHER DESCRIPTION
+   SEARCH
 ========================================= */
 
-function getWeatherDescription(code) {
+.search-section {
 
-    if (code === 0) {
-        return "Clear sky";
-    }
+    display: flex;
 
-    if (code === 1) {
-        return "Mainly clear";
-    }
+    gap: 10px;
 
-    if (code === 2) {
-        return "Partly cloudy";
-    }
+    margin-bottom: 25px;
 
-    if (code === 3) {
-        return "Overcast";
-    }
+}
 
-    if ([45, 48].includes(code)) {
-        return "Foggy";
-    }
 
-    if ([51, 53, 55].includes(code)) {
-        return "Drizzle";
-    }
+.search-section input {
 
-    if ([56, 57].includes(code)) {
-        return "Freezing drizzle";
-    }
+    flex: 1;
 
-    if ([61, 63, 65].includes(code)) {
-        return "Rain";
-    }
+    padding: 16px;
 
-    if ([66, 67].includes(code)) {
-        return "Freezing rain";
-    }
+    border: none;
 
-    if ([71, 73, 75, 77].includes(code)) {
-        return "Snow";
-    }
+    border-radius: 12px;
 
-    if ([80, 81, 82].includes(code)) {
-        return "Rain showers";
-    }
+    outline: none;
 
-    if ([85, 86].includes(code)) {
-        return "Snow showers";
-    }
+    font-size: 16px;
 
-    if ([95, 96, 99].includes(code)) {
-        return "Thunderstorm";
-    }
+}
 
-    return "Unknown weather";
+
+button {
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 15px 20px;
+
+    background: #0ea5e9;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+}
+
+
+button:hover {
+
+    background: #0284c7;
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+button:disabled {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+    transform: none;
+
 }
 
 
 /* =========================================
-   WEATHER ICON
+   CARDS
 ========================================= */
 
-function getWeatherIcon(code) {
+.card {
 
-    if (code === 0) {
-        return "☀️";
-    }
+    background:
+        rgba(255,255,255,0.13);
 
-    if ([1, 2].includes(code)) {
-        return "⛅";
-    }
+    backdrop-filter:
+        blur(15px);
 
-    if (code === 3) {
-        return "☁️";
-    }
+    -webkit-backdrop-filter:
+        blur(15px);
 
-    if ([45, 48].includes(code)) {
-        return "🌫️";
-    }
+    border:
+        1px solid
+        rgba(255,255,255,0.1);
 
-    if (
-        [51, 53, 55, 56, 57]
-            .includes(code)
-    ) {
-        return "🌦️";
-    }
+    border-radius: 20px;
 
-    if (
-        [61, 63, 65, 66, 67]
-            .includes(code)
-    ) {
-        return "🌧️";
-    }
+    padding: 25px;
 
-    if (
-        [71, 73, 75, 77, 85, 86]
-            .includes(code)
-    ) {
-        return "❄️";
-    }
+    margin-bottom: 20px;
 
-    if (
-        [80, 81, 82]
-            .includes(code)
-    ) {
-        return "🌦️";
-    }
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,0.15);
 
-    if (
-        [95, 96, 99]
-            .includes(code)
-    ) {
-        return "⛈️";
-    }
-
-    return "🌤️";
 }
 
 
 /* =========================================
-   WEATHER SUMMARY
+   CURRENT WEATHER
 ========================================= */
 
-function displaySummary(data) {
+.current-weather {
 
-    const current =
-        data.current;
+    text-align: center;
 
-
-    const code =
-        Number(current.weather_code);
+}
 
 
-    const temperature =
-        Math.round(
-            Number(
-                current.temperature_2m
-            )
-        );
+#city {
+
+    font-size: 32px;
+
+    margin-bottom: 5px;
+
+}
 
 
-    const humidity =
-        Number(
-            current.relative_humidity_2m
-        );
+#date {
+
+    opacity: 0.7;
+
+}
 
 
-    const wind =
-        Math.round(
-            Number(
-                current.wind_speed_10m
-            )
-        );
+/* =========================================
+   MAIN WEATHER
+========================================= */
+
+.main-weather {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 30px;
+
+    margin: 25px 0;
+
+}
 
 
-    const currentHour =
-        findCurrentHourIndex(
-            data.hourly,
-            current.time
-        );
+.weather-icon {
+
+    font-size: 90px;
+
+}
 
 
-    let rainChance = 0;
+#temperature {
+
+    font-size: 70px;
+
+    font-weight: bold;
+
+}
 
 
-    if (
-        currentHour >= 0 &&
-        data.hourly
-            .precipitation_probability
-    ) {
+#condition {
 
-        rainChance =
-            Number(
-                data.hourly
-                    .precipitation_probability[
-                        currentHour
-                    ]
-            ) || 0;
+    font-size: 21px;
 
-    }
+    margin:
+        5px 0 10px;
+
+}
 
 
-    let summary =
-        `Current conditions are ${getWeatherDescription(code).toLowerCase()} with a temperature of around ${temperature}°C. `;
+.temperature-area p {
+
+    opacity: 0.8;
+
+}
 
 
-    if (rainChance >= 70) {
+/* =========================================
+   WEATHER DETAILS
+========================================= */
 
-        summary +=
-            "There is a high chance of rain, so carrying an umbrella may be useful. ";
+.details {
 
-    }
+    display: grid;
 
-    else if (rainChance >= 40) {
+    grid-template-columns:
+        repeat(4, 1fr);
 
-        summary +=
-            "There is a moderate chance of rain today. ";
+    gap: 15px;
 
-    }
-
-    else {
-
-        summary +=
-            "There is currently a low chance of rain. ";
-
-    }
+}
 
 
-    if (wind >= 40) {
+.detail {
 
-        summary +=
-            "Strong winds are possible. ";
+    padding: 18px;
 
-    }
+    border-radius: 15px;
 
-    else if (wind >= 25) {
+    background:
+        rgba(255,255,255,0.1);
 
-        summary +=
-            "Winds may be noticeable. ";
-
-    }
+}
 
 
-    if (humidity >= 80) {
+.detail span {
 
-        summary +=
-            "Humidity is high.";
+    display: block;
 
-    }
+    font-size: 27px;
 
-    else if (humidity >= 60) {
+    margin-bottom: 8px;
 
-        summary +=
-            "Humidity is moderate.";
-
-    }
-
-    else {
-
-        summary +=
-            "Humidity is relatively low.";
-
-    }
+}
 
 
-    summaryElement.textContent =
-        summary;
+.detail strong {
+
+    display: block;
+
+    font-size: 18px;
+
+}
+
+
+.detail small {
+
+    display: block;
+
+    margin-top: 5px;
+
+    opacity: 0.7;
+
+}
+
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.summary-card h2,
+.alerts-section h2,
+.forecast-section h2 {
+
+    margin-bottom: 15px;
+
+}
+
+
+.summary-card p {
+
+    line-height: 1.7;
+
+    font-size: 17px;
+
+}
+
+
+/* =========================================
+   ADVERTISEMENT
+========================================= */
+
+.ad-container {
+
+    min-height: 90px;
+
+    margin:
+        20px 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background:
+        rgba(255,255,255,0.06);
+
+    color:
+        rgba(255,255,255,0.55);
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================
+   ALERTS
+========================================= */
+
+.no-alert {
+
+    background:
+        rgba(59,130,246,0.2);
+
+    border-left:
+        5px solid #3b82f6;
+
+    padding: 18px;
+
+    border-radius: 10px;
+
+    line-height: 1.6;
+
+}
+
+
+.alert {
+
+    padding: 18px;
+
+    border-radius: 12px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.alert h3 {
+
+    margin-bottom: 8px;
+
+}
+
+
+.alert p {
+
+    line-height: 1.5;
+
+}
+
+
+.alert-extreme {
+
+    background:
+        rgba(127,29,29,0.85);
+
+    border-left:
+        6px solid #ef4444;
+
+}
+
+
+.alert-severe {
+
+    background:
+        rgba(154,52,18,0.85);
+
+    border-left:
+        6px solid #f97316;
+
+}
+
+
+.alert-moderate {
+
+    background:
+        rgba(161,98,7,0.85);
+
+    border-left:
+        6px solid #facc15;
+
+}
+
+
+.alert-minor {
+
+    background:
+        rgba(30,64,175,0.85);
+
+    border-left:
+        6px solid #60a5fa;
 
 }
 
@@ -908,413 +527,141 @@ function displaySummary(data) {
    HOURLY FORECAST
 ========================================= */
 
-function displayHourlyForecast(data) {
+.hourly-container {
 
-    const hourly =
-        data.hourly;
+    display: flex;
 
+    gap: 12px;
 
-    hourlyElement.innerHTML =
-        "";
+    overflow-x: auto;
 
+    padding-bottom: 10px;
 
-    const startIndex =
-        findCurrentHourIndex(
-            hourly,
-            data.current.time
-        );
+}
 
 
-    const hoursToShow =
-        24;
+.hour {
+
+    min-width: 120px;
+
+    padding: 15px;
+
+    text-align: center;
+
+    background:
+        rgba(255,255,255,0.1);
+
+    border-radius: 15px;
+
+    flex-shrink: 0;
+
+}
 
 
-    for (
-        let i = startIndex;
-        i < startIndex + hoursToShow;
-        i++
-    ) {
+.hour strong {
 
-        if (
-            i >= hourly.time.length
-        ) {
+    font-size: 14px;
 
-            break;
-
-        }
+}
 
 
-        const temperature =
-            Math.round(
-                Number(
-                    hourly.temperature_2m[i]
-                )
-            );
+.hour .icon {
+
+    font-size: 32px;
+
+    margin: 10px 0;
+
+}
 
 
-        const rain =
-            Number(
-                hourly
-                    .precipitation_probability[i]
-            ) || 0;
+.hour .temp {
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+}
 
 
-        const code =
-            Number(
-                hourly.weather_code[i]
-            );
+.hour .condition {
+
+    font-size: 13px;
+
+    margin-top: 5px;
+
+}
 
 
-        const card =
-            document.createElement(
-                "div"
-            );
+.hour .rain {
 
+    font-size: 13px;
 
-        card.className =
-            "hour";
+    margin-top: 8px;
 
-
-        card.innerHTML = `
-
-            <strong>
-                ${formatApiHour(
-                    hourly.time[i]
-                )}
-            </strong>
-
-            <div class="icon">
-                ${getWeatherIcon(code)}
-            </div>
-
-            <div class="temp">
-                ${temperature}°C
-            </div>
-
-            <div class="condition">
-                ${getWeatherDescription(code)}
-            </div>
-
-            <div class="rain">
-                🌧️ ${Math.round(rain)}% rain
-            </div>
-
-        `;
-
-
-        hourlyElement.appendChild(
-            card
-        );
-
-    }
+    opacity: 0.8;
 
 }
 
 
 /* =========================================
-   7 DAY FORECAST
+   DAILY FORECAST
 ========================================= */
 
-function displayDailyForecast(data) {
+.daily-container {
 
-    const daily =
-        data.daily;
+    display: flex;
 
+    flex-direction: column;
 
-    dailyElement.innerHTML =
-        "";
-
-
-    for (
-        let i = 0;
-        i < daily.time.length;
-        i++
-    ) {
-
-        const code =
-            Number(
-                daily.weather_code[i]
-            );
-
-
-        const max =
-            Math.round(
-                Number(
-                    daily.temperature_2m_max[i]
-                )
-            );
-
-
-        const min =
-            Math.round(
-                Number(
-                    daily.temperature_2m_min[i]
-                )
-            );
-
-
-        const rain =
-            Number(
-                daily
-                    .precipitation_probability_max[i]
-            ) || 0;
-
-
-        const card =
-            document.createElement(
-                "div"
-            );
-
-
-        card.className =
-            "day";
-
-
-        card.innerHTML = `
-
-            <strong>
-                ${formatApiDay(
-                    daily.time[i],
-                    i
-                )}
-            </strong>
-
-            <div class="icon">
-                ${getWeatherIcon(code)}
-            </div>
-
-            <div>
-                ${getWeatherDescription(code)}
-            </div>
-
-            <div class="temps">
-                ${max}° / ${min}°
-            </div>
-
-            <div class="rain">
-                🌧️ ${Math.round(rain)}%
-            </div>
-
-        `;
-
-
-        dailyElement.appendChild(
-            card
-        );
-
-    }
+    gap: 10px;
 
 }
 
 
-/* =========================================
-   FORMAT API DATE/TIME
-========================================= */
+.day {
 
-function formatApiDateTime(
-    dateTime
-) {
+    display: grid;
 
-    if (!dateTime) {
-        return "--";
-    }
+    grid-template-columns:
+        90px
+        60px
+        1fr
+        120px
+        100px;
 
+    align-items: center;
 
-    const parts =
-        String(dateTime)
-            .split("T");
+    gap: 15px;
 
+    padding: 15px;
 
-    if (parts.length !== 2) {
-        return dateTime;
-    }
+    background:
+        rgba(255,255,255,0.1);
 
-
-    const date =
-        parts[0];
-
-
-    const time =
-        parts[1];
-
-
-    const dateParts =
-        date.split("-");
-
-
-    if (dateParts.length !== 3) {
-        return dateTime;
-    }
-
-
-    const year =
-        Number(dateParts[0]);
-
-
-    const month =
-        Number(dateParts[1]);
-
-
-    const day =
-        Number(dateParts[2]);
-
-
-    const timeParts =
-        time.split(":");
-
-
-    let hour =
-        Number(timeParts[0]);
-
-
-    const minute =
-        timeParts[1] || "00";
-
-
-    const ampm =
-        hour >= 12
-            ? "PM"
-            : "AM";
-
-
-    hour =
-        hour % 12 || 12;
-
-
-    const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    ];
-
-
-    const weekday =
-        new Date(
-            Date.UTC(
-                year,
-                month - 1,
-                day
-            )
-        ).toLocaleDateString(
-            "en-US",
-            {
-                weekday: "long",
-                timeZone: "UTC"
-            }
-        );
-
-
-    return `${weekday}, ${monthNames[month - 1]} ${day}, ${year} • ${hour}:${minute} ${ampm}`;
+    border-radius: 12px;
 
 }
 
 
-/* =========================================
-   FORMAT HOURLY TIME
-========================================= */
+.day .icon {
 
-function formatApiHour(
-    dateTime
-) {
-
-    if (!dateTime) {
-        return "--";
-    }
-
-
-    const parts =
-        String(dateTime)
-            .split("T");
-
-
-    if (parts.length !== 2) {
-        return dateTime;
-    }
-
-
-    const time =
-        parts[1];
-
-
-    const hour =
-        Number(
-            time.split(":")[0]
-        );
-
-
-    const minute =
-        time.split(":")[1] || "00";
-
-
-    const displayHour =
-        hour % 12 || 12;
-
-
-    const ampm =
-        hour >= 12
-            ? "PM"
-            : "AM";
-
-
-    return `${displayHour}:${minute} ${ampm}`;
+    font-size: 32px;
 
 }
 
 
-/* =========================================
-   FORMAT DAILY DAY
-========================================= */
+.day .temps {
 
-function formatApiDay(
-    dateString,
-    index
-) {
+    font-weight: bold;
 
-    if (index === 0) {
-
-        return "Today";
-
-    }
+}
 
 
-    const parts =
-        String(dateString)
-            .split("-");
+.day .rain {
 
+    font-size: 14px;
 
-    if (parts.length !== 3) {
-
-        return dateString;
-
-    }
-
-
-    const date =
-        new Date(
-            Date.UTC(
-                Number(parts[0]),
-                Number(parts[1]) - 1,
-                Number(parts[2])
-            )
-        );
-
-
-    return date.toLocaleDateString(
-        "en-US",
-        {
-            weekday: "short",
-            timeZone: "UTC"
-        }
-    );
+    opacity: 0.8;
 
 }
 
@@ -1323,456 +670,45 @@ function formatApiDay(
    SUNRISE / SUNSET
 ========================================= */
 
-function displaySunTimes(data) {
+.sun-section {
 
-    if (
-        !data.daily.sunrise ||
-        !data.daily.sunset
-    ) {
+    display: flex;
 
-        sunriseElement.textContent =
-            "--";
+    justify-content: space-around;
 
-        sunsetElement.textContent =
-            "--";
-
-        return;
-
-    }
-
-
-    sunriseElement.textContent =
-        formatApiHour(
-            data.daily.sunrise[0]
-        );
-
-
-    sunsetElement.textContent =
-        formatApiHour(
-            data.daily.sunset[0]
-        );
+    text-align: center;
 
 }
 
 
-/* =========================================
-   MY LOCATION
-========================================= */
+.sun-item {
 
-function getMyLocation() {
+    display: flex;
 
-    hideError();
+    flex-direction: column;
 
-
-    /*
-     * Check whether browser supports
-     * the Geolocation API.
-     */
-
-    if (
-        !("geolocation" in navigator)
-    ) {
-
-        showError(
-            "Your browser does not support location detection."
-        );
-
-        return;
-
-    }
-
-
-    /*
-     * Geolocation requires HTTPS
-     * except for special local
-     * development environments.
-     */
-
-    if (
-        window.location.protocol !== "https:" &&
-        window.location.hostname !== "localhost" &&
-        window.location.hostname !== "127.0.0.1"
-    ) {
-
-        showError(
-            "Location services require HTTPS. Please open the HTTPS version of this website."
-        );
-
-        return;
-
-    }
-
-
-    showLoading();
-
-
-    showLocationStatus(
-        "📍 Requesting your location. Please press Allow if your browser asks for permission."
-    );
-
-
-    /*
-     * Disable button while requesting
-     * the location.
-     */
-
-    locationButton.disabled =
-        true;
-
-
-    const options = {
-
-        enableHighAccuracy:
-            false,
-
-        timeout:
-            15000,
-
-        maximumAge:
-            300000
-
-    };
-
-
-    navigator.geolocation.getCurrentPosition(
-
-        async function (position) {
-
-            try {
-
-                const latitude =
-                    Number(
-                        position.coords.latitude
-                    );
-
-
-                const longitude =
-                    Number(
-                        position.coords.longitude
-                    );
-
-
-                const accuracy =
-                    Number(
-                        position.coords.accuracy
-                    );
-
-
-                console.log(
-                    "Location received:",
-                    {
-                        latitude,
-                        longitude,
-                        accuracy
-                    }
-                );
-
-
-                /*
-                 * Validate the returned
-                 * coordinates.
-                 */
-
-                if (
-                    !Number.isFinite(latitude) ||
-                    !Number.isFinite(longitude)
-                ) {
-
-                    throw new Error(
-                        "Browser returned invalid coordinates."
-                    );
-
-                }
-
-
-                if (
-                    latitude < -90 ||
-                    latitude > 90 ||
-                    longitude < -180 ||
-                    longitude > 180
-                ) {
-
-                    throw new Error(
-                        "Browser returned coordinates outside the valid range."
-                    );
-
-                }
-
-
-                showLocationStatus(
-                    `📍 Location found. Loading weather...`
-                );
-
-
-                /*
-                 * Load weather directly using
-                 * latitude and longitude.
-                 */
-
-                await getWeather(
-
-                    latitude,
-
-                    longitude,
-
-                    "Your Location",
-
-                    ""
-
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "Location weather error:",
-                    error
-                );
-
-
-                showError(
-                    "Your location was detected, but the weather data could not be loaded. Please check your internet connection and try again."
-                );
-
-            } finally {
-
-                locationButton.disabled =
-                    false;
-
-                hideLoading();
-
-            }
-
-        },
-
-
-        function (error) {
-
-            console.error(
-                "Geolocation error:",
-                error
-            );
-
-
-            locationButton.disabled =
-                false;
-
-
-            hideLoading();
-
-
-            handleLocationError(
-                error
-            );
-
-        },
-
-
-        options
-
-    );
+    gap: 7px;
 
 }
 
 
-/* =========================================
-   LOCATION ERROR HANDLING
-========================================= */
+.sun-item span {
 
-function handleLocationError(
-    error
-) {
-
-    /*
-     * 1 = PERMISSION_DENIED
-     * 2 = POSITION_UNAVAILABLE
-     * 3 = TIMEOUT
-     */
-
-    if (
-        error &&
-        error.code === 1
-    ) {
-
-        showLocationStatus(
-            "📍 Location permission was denied."
-        );
-
-
-        showError(
-            "Location access was denied. Click the location/lock icon beside the website address in your browser and allow Location, then reload the page."
-        );
-
-
-        return;
-
-    }
-
-
-    if (
-        error &&
-        error.code === 2
-    ) {
-
-        showLocationStatus(
-            "📍 Your device could not determine your location."
-        );
-
-
-        showError(
-            "Your location could not be determined. Make sure Location Services are enabled on your device and try again."
-        );
-
-
-        return;
-
-    }
-
-
-    if (
-        error &&
-        error.code === 3
-    ) {
-
-        showLocationStatus(
-            "📍 Location request timed out."
-        );
-
-
-        showError(
-            "The location request took too long. Make sure Location Services are enabled and try again."
-        );
-
-
-        return;
-
-    }
-
-
-    showLocationStatus(
-        "📍 Unable to determine your location."
-    );
-
-
-    showError(
-        "Unable to access your location. Please check your browser's location permission and try again."
-    );
+    font-size: 35px;
 
 }
 
 
-/* =========================================
-   CHECK LOCATION PERMISSION
-========================================= */
+.sun-item strong {
 
-async function checkLocationPermission() {
-
-    /*
-     * Permissions API is not available
-     * in every browser, so this is optional.
-     */
-
-    if (
-        !navigator.permissions ||
-        !navigator.permissions.query
-    ) {
-
-        return;
-
-    }
-
-
-    try {
-
-        const permission =
-            await navigator.permissions.query(
-                {
-                    name: "geolocation"
-                }
-            );
-
-
-        console.log(
-            "Geolocation permission:",
-            permission.state
-        );
-
-
-        permission.addEventListener(
-            "change",
-            function () {
-
-                console.log(
-                    "Geolocation permission changed:",
-                    permission.state
-                );
-
-            }
-        );
-
-
-    } catch (error) {
-
-        console.log(
-            "Could not check geolocation permission:",
-            error
-        );
-
-    }
+    font-size: 20px;
 
 }
 
 
-/* =========================================
-   LOCATION STATUS
-========================================= */
+.sun-item small {
 
-function showLocationStatus(
-    message
-) {
-
-    locationStatusElement.textContent =
-        message;
-
-
-    locationStatusElement.classList.remove(
-        "hidden"
-    );
-
-}
-
-
-function hideLocationStatus() {
-
-    locationStatusElement.classList.add(
-        "hidden"
-    );
-
-}
-
-
-/* =========================================
-   ALERT PLACEHOLDER
-========================================= */
-
-function displayNoAlerts() {
-
-    alertsElement.innerHTML = `
-
-        <div class="no-alert">
-
-            🔵 No connected authoritative
-            emergency alert feed yet.
-
-            <br><br>
-
-            Weather forecast information is
-            provided separately from official
-            emergency warnings.
-
-        </div>
-
-    `;
+    opacity: 0.7;
 
 }
 
@@ -1781,22 +717,18 @@ function displayNoAlerts() {
    LOADING
 ========================================= */
 
-function showLoading() {
+.loading {
 
-    loadingElement.classList.remove(
-        "hidden"
-    );
+    text-align: center;
 
-    hideError();
+    padding: 15px;
 
-}
+    background:
+        rgba(255,255,255,0.1);
 
+    border-radius: 10px;
 
-function hideLoading() {
-
-    loadingElement.classList.add(
-        "hidden"
-    );
+    margin-bottom: 20px;
 
 }
 
@@ -1805,43 +737,250 @@ function hideLoading() {
    ERROR
 ========================================= */
 
-function showError(
-    message
-) {
+.error {
 
-    errorElement.textContent =
-        message;
+    background:
+        rgba(239,68,68,0.3);
 
+    border-left:
+        5px solid #ef4444;
 
-    errorElement.classList.remove(
-        "hidden"
-    );
+    padding: 15px;
 
-}
+    margin-bottom: 20px;
 
+    border-radius: 10px;
 
-function hideError() {
-
-    errorElement.classList.add(
-        "hidden"
-    );
+    line-height: 1.5;
 
 }
 
 
 /* =========================================
-   STARTUP
+   HIDDEN
 ========================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+.hidden {
 
-        checkLocationPermission();
+    display: none;
 
-        console.log(
-            "Weather Summary loaded successfully."
-        );
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+
+    text-align: center;
+
+    opacity: 0.75;
+
+    padding: 25px 10px;
+
+    font-size: 13px;
+
+}
+
+
+.footer-links {
+
+    display: flex;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin: 15px 0;
+
+}
+
+
+.footer-links a {
+
+    color: white;
+
+    text-decoration: none;
+
+}
+
+
+.footer-links a:hover {
+
+    text-decoration: underline;
+
+}
+
+
+.copyright {
+
+    opacity: 0.65;
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 700px) {
+
+
+    body {
+
+        padding: 15px;
 
     }
-);
+
+
+    .site-nav {
+
+        gap: 6px;
+
+    }
+
+
+    .site-nav a {
+
+        font-size: 13px;
+
+        padding: 8px 10px;
+
+    }
+
+
+    .header h1 {
+
+        font-size: 29px;
+
+    }
+
+
+    .search-section {
+
+        flex-direction: column;
+
+    }
+
+
+    .main-weather {
+
+        flex-direction: column;
+
+        gap: 10px;
+
+    }
+
+
+    .weather-icon {
+
+        font-size: 70px;
+
+    }
+
+
+    #temperature {
+
+        font-size: 55px;
+
+    }
+
+
+    .details {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .day {
+
+        grid-template-columns:
+            60px
+            45px
+            1fr;
+
+    }
+
+
+    .day .temps {
+
+        text-align: right;
+
+    }
+
+
+    .day .rain {
+
+        display: none;
+
+    }
+
+
+    .sun-section {
+
+        gap: 30px;
+
+    }
+
+}
+
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 420px) {
+
+
+    .details {
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 8px;
+
+    }
+
+
+    .detail {
+
+        padding: 12px;
+
+    }
+
+
+    .detail span {
+
+        font-size: 23px;
+
+    }
+
+
+    .detail strong {
+
+        font-size: 16px;
+
+    }
+
+
+    .card {
+
+        padding: 18px;
+
+    }
+
+
+    .footer-links {
+
+        flex-direction: column;
+
+        gap: 8px;
+
+    }
+
+}
