@@ -8,7 +8,25 @@
     box-sizing: border-box;
 }
 
+.site-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
 
+.site-nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.12);
+}
+
+.site-nav a:hover {
+    background: rgba(255,255,255,0.25);
+}
 /* =========================================
    BODY
 ========================================= */
