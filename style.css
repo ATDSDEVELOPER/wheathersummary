@@ -1,3 +1,7 @@
+/* =========================================
+   RESET
+========================================= */
+
 * {
     margin: 0;
     padding: 0;
@@ -5,10 +9,9 @@
 }
 
 
-html {
-    scroll-behavior: smooth;
-}
-
+/* =========================================
+   BODY
+========================================= */
 
 body {
 
@@ -31,9 +34,12 @@ body {
 
     padding: 30px;
 
-    line-height: 1.6;
 }
 
+
+/* =========================================
+   MAIN APP
+========================================= */
 
 .app {
 
@@ -45,6 +51,10 @@ body {
 
 }
 
+
+/* =========================================
+   HEADER
+========================================= */
 
 .header {
 
@@ -73,13 +83,17 @@ body {
 }
 
 
+/* =========================================
+   SEARCH
+========================================= */
+
 .search-section {
 
     display: flex;
 
     gap: 10px;
 
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 
 }
 
@@ -133,16 +147,47 @@ button:hover {
 }
 
 
-button:focus,
-input:focus,
-a:focus {
+button:disabled {
 
-    outline: 3px solid rgba(255,255,255,0.7);
+    opacity: 0.6;
 
-    outline-offset: 2px;
+    cursor: not-allowed;
+
+    transform: none;
 
 }
 
+
+/* =========================================
+   LOCATION MESSAGE
+========================================= */
+
+.location-message {
+
+    text-align: center;
+
+    padding: 12px;
+
+    margin-bottom: 20px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,255,255,0.12);
+
+}
+
+
+.location-message.hidden {
+
+    display: none;
+
+}
+
+
+/* =========================================
+   CARDS
+========================================= */
 
 .card {
 
@@ -169,6 +214,10 @@ a:focus {
 }
 
 
+/* =========================================
+   CURRENT WEATHER
+========================================= */
+
 .current-weather {
 
     text-align: center;
@@ -187,10 +236,14 @@ a:focus {
 
 #date {
 
-    opacity: 0.7;
+    opacity: 0.75;
 
 }
 
+
+/* =========================================
+   MAIN WEATHER
+========================================= */
 
 .main-weather {
 
@@ -238,6 +291,10 @@ a:focus {
 
 }
 
+
+/* =========================================
+   WEATHER DETAILS
+========================================= */
 
 .details {
 
@@ -294,27 +351,31 @@ a:focus {
 }
 
 
+/* =========================================
+   SUMMARY
+========================================= */
+
 .summary-card h2,
 .alerts-section h2,
-.forecast-section h2,
-.information h2 {
+.forecast-section h2 {
 
     margin-bottom: 15px;
 
 }
 
 
-.summary-card p,
-.information p {
+.summary-card p {
 
     line-height: 1.7;
 
     font-size: 17px;
 
-    margin-bottom: 12px;
-
 }
 
+
+/* =========================================
+   ALERTS
+========================================= */
 
 .no-alert {
 
@@ -402,6 +463,10 @@ a:focus {
 }
 
 
+/* =========================================
+   HOURLY FORECAST
+========================================= */
+
 .hourly-container {
 
     display: flex;
@@ -478,6 +543,10 @@ a:focus {
 }
 
 
+/* =========================================
+   DAILY FORECAST
+========================================= */
+
 .daily-container {
 
     display: flex;
@@ -537,6 +606,10 @@ a:focus {
 }
 
 
+/* =========================================
+   SUNRISE / SUNSET
+========================================= */
+
 .sun-section {
 
     display: flex;
@@ -580,6 +653,10 @@ a:focus {
 }
 
 
+/* =========================================
+   LOADING
+========================================= */
+
 .loading {
 
     text-align: center;
@@ -603,6 +680,10 @@ a:focus {
 }
 
 
+/* =========================================
+   ERROR
+========================================= */
+
 .error {
 
     background:
@@ -620,42 +701,28 @@ a:focus {
 }
 
 
+/* =========================================
+   FOOTER
+========================================= */
+
 footer {
 
     text-align: center;
 
-    opacity: 0.75;
+    opacity: 0.7;
 
-    padding: 25px 10px;
+    padding: 20px;
 
     font-size: 13px;
 
-}
-
-
-.footer-links {
-
-    display: flex;
-
-    justify-content: center;
-
-    flex-wrap: wrap;
-
-    gap: 15px;
-
-    margin-top: 12px;
+    line-height: 1.8;
 
 }
 
 
-.footer-links a {
-
-    color: white;
-
-    text-decoration: underline;
-
-}
-
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 700px) {
 
