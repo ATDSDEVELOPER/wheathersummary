@@ -1,353 +1,138 @@
 /* =========================================
-WMO WEATHER ALERT SYSTEM
+   SITE HEADER
 ========================================= */
 
-/*
-IMPORTANT:
+.site-header {
+    width: 100%;
+    padding: 18px 30px;
+    margin-bottom: 20px;
+}
 
-```
-This function expects YOUR server-side alert
-endpoint to return JSON.
+.nav-container {
+    max-width: 1000px;
+    margin: auto;
 
-Example:
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-/api/alerts?lat=6.9271&lon=79.8612
+.logo {
+    color: white;
+    text-decoration: none;
+    font-size: 21px;
+    font-weight: bold;
+}
 
-The server should obtain official CAP warning
-information and return only active warnings
-relevant to the requested location.
+nav {
+    display: flex;
+    gap: 20px;
+}
 
-Do NOT put private API credentials in this file.
-```
+nav a,
+.footer-links a {
+    color: white;
+    text-decoration: none;
+}
 
-*/
-
-async function getWeatherAlerts(latitude, longitude) {
-
-```
-try {
-
-    const response = await fetch(
-
-        `/api/alerts?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`
-
-    );
+nav a:hover,
+.footer-links a:hover {
+    text-decoration: underline;
+}
 
 
-    if (!response.ok) {
+/* =========================================
+   HERO
+========================================= */
 
-        throw new Error(
-            "Weather alert request failed"
-        );
+.hero {
+    text-align: center;
+    margin: 30px 0;
+}
 
+.hero h1 {
+    font-size: 38px;
+    margin-bottom: 12px;
+}
+
+.hero p {
+    max-width: 750px;
+    margin: auto;
+    line-height: 1.7;
+    opacity: 0.9;
+}
+
+
+/* =========================================
+   INFORMATION
+========================================= */
+
+.information-card p {
+    line-height: 1.8;
+    margin-bottom: 12px;
+}
+
+.section-description {
+    margin-bottom: 15px;
+    opacity: 0.8;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    max-width: 1000px;
+    margin: auto;
+    text-align: center;
+    padding: 35px 20px;
+    line-height: 1.8;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+
+/* =========================================
+   ACCESSIBILITY
+========================================= */
+
+button:focus,
+input:focus,
+a:focus {
+    outline: 3px solid white;
+    outline-offset: 2px;
+}
+
+
+/* =========================================
+   MOBILE NAVIGATION
+========================================= */
+
+@media (max-width: 700px) {
+
+    .site-header {
+        padding: 15px;
     }
 
-
-    const data =
-        await response.json();
-
-
-    displayAlerts(data);
-
-
-} catch (error) {
-
-    console.error(
-        "Alert system error:",
-        error
-    );
-
-
-    displayAlertError();
-
-}
-```
-
-}
-
-/* =========================================
-DISPLAY ALERTS
-========================================= */
-
-function displayAlerts(data) {
-
-```
-alertsElement.innerHTML = "";
-
-
-if (
-    !data ||
-    !Array.isArray(data.alerts) ||
-    data.alerts.length === 0
-) {
-
-    alertsElement.innerHTML = `
-
-        <div class="no-alert">
-
-            ✅ No active weather alerts
-            were found for this location.
-
-        </div>
-
-    `;
-
-    return;
-
-}
-
-
-data.alerts.forEach(function(alert) {
-
-
-    const alertElement =
-        document.createElement("div");
-
-
-    const severity =
-        String(
-            alert.severity || "Unknown"
-        ).toLowerCase();
-
-
-    alertElement.className =
-        `alert ${getAlertClass(severity)}`;
-
-
-    const title =
-        escapeHTML(
-            alert.title || "Weather Alert"
-        );
-
-
-    const event =
-        escapeHTML(
-            alert.event || ""
-        );
-
-
-    const description =
-        escapeHTML(
-            alert.description || ""
-        );
-
-
-    const instruction =
-        escapeHTML(
-            alert.instruction || ""
-        );
-
-
-    const sender =
-        escapeHTML(
-            alert.sender || "Official authority"
-        );
-
-
-    const effective =
-        escapeHTML(
-            alert.effective || ""
-        );
-
-
-    const expires =
-        escapeHTML(
-            alert.expires || ""
-        );
-
-
-    const sourceURL =
-        alert.sourceURL || "";
-
-
-    alertElement.innerHTML = `
-
-        <h3>
-            ⚠️ ${title}
-        </h3>
-
-        ${
-            event
-                ? `<p><strong>Event:</strong> ${event}</p>`
-                : ""
-        }
-
-        ${
-            severity
-                ? `<p><strong>Severity:</strong> ${capitalizeFirstLetter(severity)}</p>`
-                : ""
-        }
-
-        ${
-            description
-                ? `<p>${description}</p>`
-                : ""
-        }
-
-        ${
-            instruction
-                ? `
-                    <p class="alert-instructions">
-                        <strong>Instructions:</strong><br>
-                        ${instruction}
-                    </p>
-                `
-                : ""
-        }
-
-        ${
-            effective || expires
-                ? `
-                    <p class="alert-time">
-                        ${
-                            effective
-                                ? `<strong>Effective:</strong> ${effective}<br>`
-                                : ""
-                        }
-
-                        ${
-                            expires
-                                ? `<strong>Expires:</strong> ${expires}`
-                                : ""
-                        }
-                    </p>
-                `
-                : ""
-        }
-
-        <p class="alert-source">
-
-            <strong>Issued by:</strong>
-            ${sender}
-
-            ${
-                sourceURL
-                    ? `
-                        <br><br>
-
-                        <a
-                            href="${escapeAttribute(sourceURL)}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            View official warning
-                        </a>
-                    `
-                    : ""
-            }
-
-        </p>
-
-    `;
-
-
-    alertsElement.appendChild(
-        alertElement
-    );
-
-});
-```
-
-}
-
-/* =========================================
-ALERT SEVERITY
-========================================= */
-
-function getAlertClass(severity) {
-
-```
-if (severity.includes("extreme")) {
-
-    return "alert-extreme";
-
-}
-
-
-if (severity.includes("severe")) {
-
-    return "alert-severe";
-
-}
-
-
-if (severity.includes("moderate")) {
-
-    return "alert-moderate";
-
-}
-
-
-return "alert-minor";
-```
-
-}
-
-/* =========================================
-ALERT API ERROR
-========================================= */
-
-function displayAlertError() {
-
-```
-alertsElement.innerHTML = `
-
-    <div class="no-alert">
-
-        ⚠️ Weather alert information is
-        temporarily unavailable.
-
-        <br><br>
-
-        Please check your local official
-        meteorological authority for
-        current warnings.
-
-    </div>
-
-`;
-```
-
-}
-
-/* =========================================
-HTML SAFETY
-========================================= */
-
-function escapeHTML(value) {
-
-```
-return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-```
-
-}
-
-function escapeAttribute(value) {
-
-```
-return String(value)
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-```
-
-}
-
-function capitalizeFirstLetter(value) {
-
-```
-if (!value) {
-
-    return "";
-
-}
-
-return value.charAt(0).toUpperCase()
-    + value.slice(1);
-```
+    .nav-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
 
 }
